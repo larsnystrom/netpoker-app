@@ -5,16 +5,17 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import Client.TodoList;
+import client.TodoList;
 
-public class RecieverThread extends Thread{
+
+public class ServerRecieverThread extends Thread{
 		
 		private Chatbox chatbox;
 		private TodoList todo;
 		private DatagramSocket socket;
 		private DatagramPacket dp;
 		
-		public RecieverThread(DatagramSocket socket, DatagramPacket dp, Chatbox chatbox, TodoList todo){
+		public ServerRecieverThread(DatagramSocket socket, DatagramPacket dp, Chatbox chatbox, TodoList todo){
 			this.socket = socket;
 			this.chatbox = chatbox;
 			this.todo = todo;
@@ -28,13 +29,13 @@ public class RecieverThread extends Thread{
 				String message = new String(dp.getData(),0,dp.getLength());
 																					System.out.println(this.getName() + " Message recieved: " + message);
 				String[] fullMessage = message.split("##");
-				send(fullMessage[0] + "##ack", dp.getAddress(), dp.getPort()); //hŠnger sig fšrsta gŒngen!!
+				send(fullMessage[0] + "##ack", dp.getAddress(), dp.getPort()); //hï¿½nger sig fï¿½rsta gï¿½ngen!!
 				String command = fullMessage[1];
 								
 				if (command.equals("C")) { //Chatt
 					chatbox.write(fullMessage[2], dp.getAddress(), dp.getPort());
 				} else if (command.equals("J")) { //Join
-					// lŠgg till spelaren i joinlistan
+					// lï¿½gg till spelaren i joinlistan
 				} else {
 					todo.write(message, dp.getAddress(), dp.getPort()); 
 				}

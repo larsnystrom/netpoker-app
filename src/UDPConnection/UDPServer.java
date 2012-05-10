@@ -8,8 +8,9 @@ import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-import Client.Player;
-import Client.TodoList;
+import client.ClientPlayer;
+import client.TodoList;
+
 
 public class UDPServer {
 
@@ -17,7 +18,7 @@ public class UDPServer {
 	int threadName = 0 ;
 	DatagramSocket socket;
 	
-	public UDPServer(Player[] players) {
+	public UDPServer(ClientPlayer[] players) {
 		
 		//port = players[0].getPortAddress();
 		Chatbox chatbox = new Chatbox(players);
@@ -32,7 +33,7 @@ public class UDPServer {
 		}
 				
 		//Open firewall for incoming messages from all players
-		for(Player player : players){
+		for(ClientPlayer player : players){
 			send("Opening firewall", player);
 		}
 		
@@ -53,7 +54,7 @@ public class UDPServer {
 				socket.receive(dp);
 			
 				// Start reciever thread
-				RecieverThread thread = new RecieverThread(socket, dp, chatbox, todo);
+				ServerRecieverThread thread = new ServerRecieverThread(socket, dp, chatbox, todo);
 				thread.setName("Thread " + threadName++);
 				thread.start();
 				System.out.println("Started " + thread.getName());
@@ -65,7 +66,7 @@ public class UDPServer {
 		}
 	}
 
-	public void send(String message, Player player) {
+	public void send(String message, ClientPlayer player) {
 		// Create a DatagramPacket to send
 		byte[] data1 = (message + "\n").getBytes();
 

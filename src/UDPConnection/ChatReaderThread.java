@@ -4,15 +4,16 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import Client.Player;
+import client.ClientPlayer;
+
 
 public class ChatReaderThread extends Thread {
 
 	private Chatbox chatbox;
-	private Player[] players;
+	private ClientPlayer[] players;
 	DatagramSocket socket;
 
-	public ChatReaderThread(Chatbox chatbox, Player[] players, DatagramSocket socket) {
+	public ChatReaderThread(Chatbox chatbox, ClientPlayer[] players, DatagramSocket socket) {
 		this.chatbox = chatbox;
 		this.players = players;
 		this.socket = socket;
@@ -21,13 +22,13 @@ public class ChatReaderThread extends Thread {
 	public void run() {
 		while (true) {
 			String s = chatbox.clear();
-			for (Player player : players) {
+			for (ClientPlayer player : players) {
 				send("C##" + s, player);
 			}
 		}
 	}
 	
-	private void send(String message, Player player) {
+	private void send(String message, ClientPlayer player) {
 		// Create a DatagramPacket to send
 		byte[] data1 = (message + "\n").getBytes();
 

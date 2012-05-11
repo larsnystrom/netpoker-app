@@ -5,9 +5,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 
-import client.ClientPlayer;
-import client.IAmClient;
-
+import Client.Player;
 
 
 public class TestUDPClient {
@@ -31,6 +29,6 @@ public class TestUDPClient {
 			e.printStackTrace();
 		}
 		port = Integer.parseInt(args[1]);
-		IAmClient client1 = new IAmClient(hostAddress, 30000);
+		UDPClient client1 = new UDPClient(hostAddress, 30000);
 	}
 }

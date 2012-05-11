@@ -2,15 +2,14 @@ package UDPConnection;
 
 import java.net.InetAddress;
 
-import client.ClientPlayer;
-
+import Client.Player;
 
 public class Chatbox {
 
 	String s = null;
-	ClientPlayer[] players;
+	Player[] players;
 
-	public Chatbox(ClientPlayer[] players) {
+	public Chatbox(Player[] players) {
 		this.players = players;
 	}
 
@@ -24,14 +23,14 @@ public class Chatbox {
 			}
 		}
 		
-		ClientPlayer p = new ClientPlayer(inetAddress, port);
+		Player p = new Player(inetAddress, port);
 		
 		notifyAll();
 		this.s =  getPlayerName(p) + ": " + s;
 	}
 	
-	private String getPlayerName(ClientPlayer player){
-		for(ClientPlayer p: players){
+	private String getPlayerName(Player player){
+		for(Player p: players){
 			if(p.equals(player)){
 				return p.getNickName();
 			}

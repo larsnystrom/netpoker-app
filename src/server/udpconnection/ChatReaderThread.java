@@ -1,47 +1,48 @@
 package server.udpconnection;
 
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-
+import model.udpconnection.AckManager;
+import model.udpconnection.SenderThread;
 
 
 public class ChatReaderThread extends Thread {
 
 	private Chatbox chatbox;
-	private ClientInfo[] players;
-	DatagramSocket socket;
 
-	public ChatReaderThread(Chatbox chatbox, ClientInfo[] players, DatagramSocket socket) {
+	private Player[] players;
+	AckManager ackmanager;
+	int messageNbr;
+
+	public ChatReaderThread(Chatbox chatbox, Player[] players,
+			AckManager ackmanager, int messageNbr) {
 		this.chatbox = chatbox;
 		this.players = players;
-		this.socket = socket;
+		this.ackmanager = ackmanager;
+		this.messageNbr = messageNbr;
 	}
 
 	public void run() {
 		while (true) {
 			String s = chatbox.clear();
-			for (ClientInfo player : players) {
+			for (Player player : players) {
 				send("C##" + s, player);
 			}
 		}
 	}
-	
-	private void send(String message, ClientInfo player) {
-		// Create a DatagramPacket to send
-		byte[] data1 = (message + "\n").getBytes();
 
-		DatagramPacket dpsend = null;
-		dpsend = new DatagramPacket(data1, data1.length, 
-				player.getAddress(), player.getPortAddress());
+	public void send(String message, Player player) {
+		messageNbr++;
 
-		// Send the datagram
-		try {
-			socket.send(dpsend);
-		} catch (IOException e) {
-			System.out.println("An IOException occured: " + e);
-		}
+		// Removes last character in string
+		message = message.substring(0, message.length() - 1);
+
+		// start a SenderThread
+		SenderThread sender = new SenderThread(ackmanager, message,
+				player.getAddress(), player.getPortAddress(), messageNbr);
+		sender.start();
 	}
-
 }

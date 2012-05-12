@@ -1,4 +1,4 @@
-package UDPConnection;
+package tests;
 
 
 import java.net.InetAddress;
@@ -39,7 +39,6 @@ public class TestUDPClient {
 		port = Integer.parseInt(args[1]);
 		
 		
-		
 		String[] playerNames = new String[4];
 		playerNames[0] = "Lars";
 		playerNames[1] = "Olle";
@@ -48,7 +47,7 @@ public class TestUDPClient {
 		
 		
 		UDPClient udpClient = new UDPClient(playerNames, hostAddress, 30000);
-		
+
 		
 	}
 }

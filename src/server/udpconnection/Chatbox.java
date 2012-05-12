@@ -3,13 +3,12 @@ package server.udpconnection;
 import java.net.InetAddress;
 
 
-
 public class Chatbox {
 
 	String s = null;
-	ClientInfo[] players;
+	Player[] players;
 
-	public Chatbox(ClientInfo[] players) {
+	public Chatbox(Player[] players) {
 		this.players = players;
 	}
 
@@ -23,14 +22,13 @@ public class Chatbox {
 			}
 		}
 		
-		ClientInfo p = new ClientInfo(inetAddress, port);
-		
-		notifyAll();
+		Player p = new Player(inetAddress, port);
 		this.s =  getPlayerName(p) + ": " + s;
+		notifyAll();
 	}
 	
-	private String getPlayerName(ClientInfo player){
-		for(ClientInfo p: players){
+	private String getPlayerName(Player player){
+		for(Player p: players){
 			if(p.equals(player)){
 				return p.getNickName();
 			}
@@ -39,6 +37,7 @@ public class Chatbox {
 	}
 
 	public synchronized String clear() {
+		System.out.println("In chatbox");
 		while (s == null) {
 			try {
 				wait();

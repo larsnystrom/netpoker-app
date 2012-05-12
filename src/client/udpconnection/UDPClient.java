@@ -7,13 +7,19 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.HashSet;
 
+import client.chat.gui.ChatPanel;
 import client.texasholdem.gui.Gui;
+import javax.swing.JFrame;
+
+import model.udpconnection.AckManager;
+import model.udpconnection.SenderThread;
 
 
 
 public class UDPClient {
 
-	DatagramSocket socket = null;
+	DatagramSocket socket;
+	AckManager ackmanager;
 	InetAddress hostAddress = null;
 	Boolean myTurn = false;
 	int port;
@@ -25,20 +31,45 @@ public class UDPClient {
 		this.port = port;
 		// Create a DatagramSocket on any free port
 		try {
-			socket = new DatagramSocket();
+			socket = new DatagramSocket(35000); //ta bort portnummret sedan!
 		} catch (SocketException e) {
 			System.out.println("Could not create socket!");
 			System.exit(1);
 		}
-		
-		// start a ClientReciever
-		ClientRecieverThread receiver = new ClientRecieverThread(socket, ackList, myTurn);
-		receiver.start();
-		
-		Gui gui = new Gui(playerNames);
+	
+		ackmanager = new AckManager(socket);
 
+		//endast f�r testning av chatten - skall tas bort
+		//------------------------------------------------
+		JFrame frame = new JFrame();
+		ChatPanel chat = new ChatPanel(this);
+		frame.add(chat);
+		frame.setSize(400, 200);
+		frame.setVisible(true);
+		//------------------------------------------------
+		
 		// Send "Join message"
-		send("J##  Trying to join");
+		send("J## Trying to join");
+		
+		// Create a DatagramPacket to hold the incoming message
+		byte[] data = new byte[65507];
+		DatagramPacket dp = new DatagramPacket(data, data.length);
+		
+		while (true) {
+			// Extract the message and start receiver thread
+			try {
+				System.out.println("UDPClient, Waiting for message ...");
+				socket.receive(dp);
+				
+				// start a ClientReciever
+				ClientRecieverThread receiver = new ClientRecieverThread(dp, ackmanager, myTurn, chat, null);
+				receiver.start();
+
+			} catch (IOException e) {
+				System.out.println("An IOException occured: " + e);
+				System.exit(1);
+			}
+		}
 	}
 	
 	public int getPortAddress() {
@@ -48,27 +79,9 @@ public class UDPClient {
 	public void send(String message) {
 		messageNbr++;
 
-		// Create a DatagramPacket to send
-		byte[] outdata = (messageNbr + "##" + message + "\n").getBytes();
-		DatagramPacket dp = new DatagramPacket(outdata, outdata.length,
-				hostAddress, port);
-
-		while (!ackList.contains(messageNbr)) {
-
-			// Send the datagram
-			try {
-				socket.send(dp);
-			} catch (IOException e) {
-				System.out.println("An IOException occured: " + e);
-			}
-			
-			System.out.println("UDClient sent: " +message);
-			try {
-				Thread.sleep(5000L);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		// start a SenderThread
+		SenderThread sender = new SenderThread(ackmanager, message, hostAddress, port, messageNbr);
+		sender.start();
+		
 	}
 }

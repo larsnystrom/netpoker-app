@@ -1,4 +1,4 @@
-package UDPConnection;
+package tests;
 
 import model.texasholdem.Player;
 import model.texasholdem.Table;

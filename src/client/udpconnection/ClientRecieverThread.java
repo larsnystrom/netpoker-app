@@ -1,31 +1,31 @@
 package client.udpconnection;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 
-import Client.ChatPanel;
+
+import client.chat.gui.ChatPanel;
+import client.texasholdem.gui.Gui;
 
 import model.texasholdem.Player;
+import model.udpconnection.AckManager;
 
 public class ClientRecieverThread extends Thread {
 
-	private DatagramSocket socket;
-	HashSet<Integer> ackList;
+	AckManager ackmanager;
 	Boolean myTurn;
 	ChatPanel chat;
 	DatagramPacket dp;
+	Gui gui;
 
-	public ClientRecieverThread(DatagramSocket socket, DatagramPacket dp,
-			HashSet<Integer> ackList, Boolean myTurn, ChatPanel chat) {
+	public ClientRecieverThread(DatagramPacket dp, AckManager ackmanager,
+			Boolean myTurn, ChatPanel chat, Gui gui) {
 		this.chat = chat;
-		this.socket = socket;
-		this.ackList = ackList;
+		this.ackmanager = ackmanager;
 		this.myTurn = myTurn;
 		this.dp = dp;
+		this.gui = gui;
 	}
 
 	public void run() {
@@ -35,20 +35,21 @@ public class ClientRecieverThread extends Thread {
 		String[] fullMessage = message.split("##");
 
 		// Sends an ack to sender for received message
-		if(!fullMessage[1].equals("ack")){
-			sendOnce(fullMessage[0] + "##ack##", dp.getAddress(), dp.getPort());
+		if (!fullMessage[1].equals("ack")) {
+			ackmanager.sendOnce(fullMessage[0] + "##ack##", dp.getAddress(),
+					dp.getPort());
 		}
 		String command = fullMessage[1];
 
-		if (ackList.add(Integer.parseInt(fullMessage[0]))) {
+		if (ackmanager.addAck(Integer.parseInt(fullMessage[0]))) {
 			if (command.equals("C")) { // Chatt
 				chat.updateChat(fullMessage[2]);
 			} else if (command.equals("T")) { // Turn to play
 				myTurn = true;
-			} else if (command.equals("JOIN") {
+			} else if (command.equals("JOIN")) {
 				// Läs in parametrar som skickats
 				int bigBlind = Integer.parseInt(fullMessage[2]);
-				List<Player> players = new List<Player>();
+				List<Player> players = new ArrayList<Player>();
 				StringBuilder sb = new StringBuilder();
 				for (int i = 3; i < fullMessage.length; i++) {
 					sb.append(fullMessage[i]);
@@ -62,22 +63,6 @@ public class ClientRecieverThread extends Thread {
 				//Anropa rätt funktion i Gui
 				gui.joinedTable(bigBlind, players);
 			}
-		}
-	}
-
-	private void sendOnce(String message, InetAddress adress, int port) {
-		// Create a DatagramPacket to send
-		byte[] outdata = (message + "\n").getBytes();
-
-		DatagramPacket dpsend = new DatagramPacket(outdata, outdata.length,
-				adress, port);
-		System.out.println("RecThrd sent: " + message);
-
-		// Send the datagram
-		try {
-			socket.send(dpsend);
-		} catch (IOException e) {
-			System.out.println("An IOException occured: " + e);
 		}
 	}
 }

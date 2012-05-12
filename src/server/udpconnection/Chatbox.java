@@ -6,9 +6,9 @@ import java.net.InetAddress;
 public class Chatbox {
 
 	String s = null;
-	Player[] players;
+	ClientInfo[] players;
 
-	public Chatbox(Player[] players) {
+	public Chatbox(ClientInfo[] players) {
 		this.players = players;
 	}
 
@@ -22,13 +22,13 @@ public class Chatbox {
 			}
 		}
 		
-		Player p = new Player(inetAddress, port);
+		ClientInfo p = new ClientInfo(inetAddress, port);
 		this.s =  getPlayerName(p) + ": " + s;
 		notifyAll();
 	}
 	
-	private String getPlayerName(Player player){
-		for(Player p: players){
+	private String getPlayerName(ClientInfo player){
+		for(ClientInfo p: players){
 			if(p.equals(player)){
 				return p.getNickName();
 			}

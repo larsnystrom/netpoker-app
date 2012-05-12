@@ -21,14 +21,11 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JFrame;
-
-import client.texasholdem.clients.DummyClient;
 
 import model.texasholdem.Action;
 import model.texasholdem.Card;

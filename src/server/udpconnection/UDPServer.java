@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.net.URL;
-import java.net.UnknownHostException;
 
 import model.udpconnection.AckManager;
 import model.udpconnection.SenderThread;
@@ -20,7 +18,7 @@ public class UDPServer {
 	int messageNbr = 0;
 	AckManager ackmanager;
 
-	public UDPServer(Player[] players) {
+	public UDPServer(ClientInfo[] players) {
 
 		// port = players[0].getPortAddress();
 		Chatbox chatbox = new Chatbox(players);
@@ -42,7 +40,7 @@ public class UDPServer {
 		chatReader.start();
 
 		// Open firewall for incoming messages from all players
-		for (Player player : players) {
+		for (ClientInfo player : players) {
 			ackmanager.sendOnce("000##X##Opening firewall",
 					player.getAddress(), player.getPortAddress());
 		}
@@ -71,7 +69,7 @@ public class UDPServer {
 		}
 	}
 
-	public void send(String message, Player player) {
+	public void send(String message, ClientInfo player) {
 		messageNbr++;
 
 		// start a SenderThread

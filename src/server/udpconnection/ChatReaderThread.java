@@ -1,10 +1,6 @@
 package server.udpconnection;
 
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-
 import model.udpconnection.AckManager;
 import model.udpconnection.SenderThread;
 
@@ -13,11 +9,11 @@ public class ChatReaderThread extends Thread {
 
 	private Chatbox chatbox;
 
-	private Player[] players;
+	private ClientInfo[] players;
 	AckManager ackmanager;
 	int messageNbr;
 
-	public ChatReaderThread(Chatbox chatbox, Player[] players,
+	public ChatReaderThread(Chatbox chatbox, ClientInfo[] players,
 			AckManager ackmanager, int messageNbr) {
 		this.chatbox = chatbox;
 		this.players = players;
@@ -28,13 +24,13 @@ public class ChatReaderThread extends Thread {
 	public void run() {
 		while (true) {
 			String s = chatbox.clear();
-			for (Player player : players) {
+			for (ClientInfo player : players) {
 				send("C##" + s, player);
 			}
 		}
 	}
 
-	public void send(String message, Player player) {
+	public void send(String message, ClientInfo player) {
 		messageNbr++;
 
 		// Removes last character in string

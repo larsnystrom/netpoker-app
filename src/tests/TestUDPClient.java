@@ -30,10 +30,15 @@ public class TestUDPClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		String[] playerNames = new String[4];
+		playerNames[0] = "Lars";
+		playerNames[1] = "Olle";
+		playerNames[2] = "Bagge";
+		playerNames[3] = "KG";
 		
 	
 		port = Integer.parseInt(args[1]);
-		UDPClient client1 = new UDPClient(, hostAddress, 30000);
+		UDPClient client1 = new UDPClient(playerNames, hostAddress, 30000);
 		
 	}
 }

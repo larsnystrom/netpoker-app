@@ -39,6 +39,7 @@ public class ClientRecieverThread extends Thread {
 			ackmanager.sendOnce(fullMessage[0] + "##ack##", dp.getAddress(),
 					dp.getPort());
 		}
+		
 		String command = fullMessage[1];
 
 		if (ackmanager.addAck(Integer.parseInt(fullMessage[0]))) {

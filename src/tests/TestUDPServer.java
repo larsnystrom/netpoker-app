@@ -4,11 +4,8 @@ package tests;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
-
 import server.udpconnection.ClientInfo;
 import server.udpconnection.UDPServer;
-
-
 
 public class TestUDPServer {
 
@@ -34,7 +31,7 @@ public class TestUDPServer {
 
 		ClientInfo[] players = new ClientInfo[1]; 
 		players[0]	= new ClientInfo(hostAddress, 35000);
-//		players[1]	= new Player(hostAddress, 40000);
+//		players[1]	= new ClientInfo(hostAddress, 40000);
 		players[0].setNickName("MrPoker");
 //		players[1].setNickName("Kajan");
 		

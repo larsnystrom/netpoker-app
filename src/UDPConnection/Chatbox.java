@@ -2,7 +2,6 @@ package UDPConnection;
 
 import java.net.InetAddress;
 
-import Client.Player;
 
 public class Chatbox {
 
@@ -24,9 +23,8 @@ public class Chatbox {
 		}
 		
 		Player p = new Player(inetAddress, port);
-		
-		notifyAll();
 		this.s =  getPlayerName(p) + ": " + s;
+		notifyAll();
 	}
 	
 	private String getPlayerName(Player player){
@@ -39,6 +37,7 @@ public class Chatbox {
 	}
 
 	public synchronized String clear() {
+		System.out.println("In chatbox");
 		while (s == null) {
 			try {
 				wait();

@@ -2,18 +2,16 @@ package UDPConnection;
 
 import java.net.DatagramPacket;
 
-public class ClientRecieverThread extends Thread {
+public class ServerRecieverThread extends Thread {
 
-	AckManager ackmanager;
-	Boolean myTurn;
-	ChatPanel chat;
-	DatagramPacket dp;
+	private Chatbox chatbox;
+	private DatagramPacket dp;
+	private AckManager ackmanager;
 
-	public ClientRecieverThread(DatagramPacket dp, AckManager ackmanager,
-			Boolean myTurn, ChatPanel chat) {
-		this.chat = chat;
+	public ServerRecieverThread(AckManager ackmanager, DatagramPacket dp,
+			Chatbox chatbox) {
+		this.chatbox = chatbox;
 		this.ackmanager = ackmanager;
-		this.myTurn = myTurn;
 		this.dp = dp;
 	}
 
@@ -24,17 +22,20 @@ public class ClientRecieverThread extends Thread {
 		String[] fullMessage = message.split("##");
 
 		// Sends an ack to sender for received message
-		if (!fullMessage[1].equals("ack")) {
+		if (!(fullMessage[1].equals("ack"))) {
 			ackmanager.sendOnce(fullMessage[0] + "##ack##", dp.getAddress(),
 					dp.getPort());
 		}
+
 		String command = fullMessage[1];
 
 		if (ackmanager.addAck(Integer.parseInt(fullMessage[0]))) {
+
 			if (command.equals("C")) { // Chatt
-				chat.updateChat(fullMessage[2]);
-			} else if (command.equals("T")) { // Turn to play
-				myTurn = true;
+				chatbox.write(fullMessage[2], dp.getAddress(), dp.getPort());
+				System.out.println("Writing to chatbox: " + fullMessage[2]);
+			} else if (command.equals("J")) { // Join
+
 			} else {
 			}
 		}

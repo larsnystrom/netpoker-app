@@ -5,10 +5,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 
-
-import server.udpconnection.ClientInfo;
 import server.udpconnection.ClientInfo;
 import server.udpconnection.UDPServer;
+
 
 
 public class TestUDPServer {
@@ -32,7 +31,6 @@ public class TestUDPServer {
 			e.printStackTrace();
 		}
 		
-
 
 		ClientInfo[] players = new ClientInfo[1]; 
 		players[0]	= new ClientInfo(hostAddress, 35000);

@@ -79,7 +79,7 @@ public class UDPClient {
 		messageNbr++;
 
 		// start a SenderThread
-		SenderThread sender = new SenderThread(ackmanager, message, hostAddress, port, messageNbr);
+		SenderThread sender = new SenderThread(ackmanager, message, hostAddress, messageNbr);
 		sender.start();
 		
 	}

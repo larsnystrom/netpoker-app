@@ -4,7 +4,6 @@ import java.net.DatagramPacket;
 
 import model.udpconnection.AckManager;
 
-
 public class ServerRecieverThread extends Thread {
 
 	private Chatbox chatbox;

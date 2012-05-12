@@ -10,15 +10,22 @@ public class AckManager {
 	
 	private DatagramSocket socket;
 	private HashSet<Integer> ackList = new HashSet<Integer>();
+	private Integer messageNbr;
 	
 	public AckManager(DatagramSocket socket){
 		this.socket = socket;
+		messageNbr = 0;
 	}
 	
 	public DatagramSocket getSocket(){
 		return socket;
 	}
 	
+	public synchronized int getMessageNbr(){
+		messageNbr = messageNbr + 1;
+		notifyAll();
+		return messageNbr;
+	}
 	
 	public synchronized void sendOnce(String message, InetAddress adress, int port) {
 		// Create a DatagramPacket to send

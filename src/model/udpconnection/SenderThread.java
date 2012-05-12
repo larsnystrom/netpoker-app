@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-
 public class SenderThread extends Thread {
 	
 	DatagramSocket socket;
@@ -15,17 +14,17 @@ public class SenderThread extends Thread {
 	int messageNbr;
 	String message;
 
-	public SenderThread(AckManager ackmanager, String message, InetAddress hostAddress, int port, int messageNbr) {
-		this.hostAddress = hostAddress;
-		this.message = message;
-		this.socket = ackmanager.getSocket();
+	public SenderThread(AckManager ackmanager, String message, InetAddress hostAddress, int port) {
 		this.ackmanager = ackmanager;
+		this.message = message;
+		this.hostAddress = hostAddress;
 		this.port = port;
-		this.messageNbr = messageNbr;
+		this.socket = this.ackmanager.getSocket();
 	}
 
 	public void run() {
 		// Create a DatagramPacket to send
+		messageNbr = ackmanager.getMessageNbr();
 		byte[] outdata = (messageNbr + "##" + message + "\n").getBytes();
 		DatagramPacket dp = new DatagramPacket(outdata, outdata.length,
 				hostAddress, port);

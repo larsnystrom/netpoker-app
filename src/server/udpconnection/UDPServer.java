@@ -8,14 +8,11 @@ import java.net.SocketException;
 import model.udpconnection.AckManager;
 import model.udpconnection.SenderThread;
 
-
 public class UDPServer {
 
 	int port = 30000;
 	int threadName = 0;
 	DatagramSocket socket;
-	
-	int messageNbr = 0;
 	AckManager ackmanager;
 
 	public UDPServer(ClientInfo[] players) {
@@ -34,8 +31,7 @@ public class UDPServer {
 		ackmanager = new AckManager(socket);
 		
 		// Start chatboxReader
-		ChatReaderThread chatReader = new ChatReaderThread(chatbox, players,
-				ackmanager, messageNbr);
+		ChatReaderThread chatReader = new ChatReaderThread(chatbox, players, ackmanager);
 		chatReader.setName("chatReader");
 		chatReader.start();
 
@@ -70,11 +66,10 @@ public class UDPServer {
 	}
 
 	public void send(String message, ClientInfo player) {
-		messageNbr++;
-
+		
 		// start a SenderThread
 		SenderThread sender = new SenderThread(ackmanager, message,
-				player.getAddress(), player.getPortAddress(), messageNbr);
+				player.getAddress(), player.getPortAddress());
 		sender.start();
 	}
 }

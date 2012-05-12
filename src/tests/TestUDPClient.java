@@ -5,14 +5,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 
-import model.texasholdem.Player;
-import model.texasholdem.Table;
-import model.texasholdem.bots.DummyBot;
-
-import client.texasholdem.gui.Gui;
 import client.udpconnection.UDPClient;
 
-import server.udpconnection.ClientInfo;
 
 
 
@@ -36,18 +30,10 @@ public class TestUDPClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	
 		port = Integer.parseInt(args[1]);
-		
-		
-		String[] playerNames = new String[4];
-		playerNames[0] = "Lars";
-		playerNames[1] = "Olle";
-		playerNames[2] = "Bagge";
-		playerNames[3] = "KG";
-		
-		
-		UDPClient udpClient = new UDPClient(playerNames, hostAddress, 30000);
-
+		UDPClient client1 = new UDPClient(, hostAddress, 30000);
 		
 	}
 }

@@ -27,6 +27,8 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 
+
+import model.chat.ChatClient;
 import model.texasholdem.Action;
 import model.texasholdem.Card;
 import model.texasholdem.Client;
@@ -40,7 +42,7 @@ import model.texasholdem.Player;
  * 
  * @author Oscar Stigter
  */
-public class Gui extends JFrame implements Client {
+public class Gui extends JFrame implements ChatClient {
 
 	/** Serial version UID. */
 	private static final long serialVersionUID = 1L;
@@ -286,6 +288,24 @@ public class Gui extends JFrame implements Client {
 				playerPanel.setDealer(isDealer);
 			}
 		}
+	}
+
+	@Override
+	public void chatMessage(String message) {
+//		chat.updateChat(message);
+		System.out.println("CHAT: " + message);
+	}
+
+	@Override
+	public void actAckSet(Action action) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Action actAckGet() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

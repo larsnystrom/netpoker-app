@@ -65,11 +65,13 @@ public class UDPServer {
 		}
 	}
 
-	public void send(String message, ClientInfo player) {
+	public SenderThread send(String message, ClientInfo player) {
 		
 		// start a SenderThread
 		SenderThread sender = new SenderThread(ackmanager, message,
 				player.getAddress(), player.getPortAddress());
 		sender.start();
+		
+		return sender;
 	}
 }

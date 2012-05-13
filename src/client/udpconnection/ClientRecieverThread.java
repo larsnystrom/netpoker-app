@@ -2,14 +2,17 @@ package client.udpconnection;
 
 import java.net.DatagramPacket;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
 
 import client.chat.gui.ChatPanel;
 import client.texasholdem.gui.Gui;
 
 import model.texasholdem.Player;
 import model.udpconnection.AckManager;
+import model.udpconnection.AckPacket;
+import model.udpconnection.Packet;
+import model.udpconnection.PacketParser;
 
 public class ClientRecieverThread extends Thread {
 
@@ -18,6 +21,7 @@ public class ClientRecieverThread extends Thread {
 	ChatPanel chat;
 	DatagramPacket dp;
 	Gui gui;
+	HashSet<Integer> receivedPackets = new HashSet<Integer>();
 
 	public ClientRecieverThread(DatagramPacket dp, AckManager ackmanager,
 			Boolean myTurn, ChatPanel chat, Gui gui) {
@@ -29,40 +33,29 @@ public class ClientRecieverThread extends Thread {
 	}
 
 	public void run() {
-
 		String message = new String(dp.getData(), 0, dp.getLength());
 		System.out.print(this.getName() + " Message recieved: " + message);
-		String[] fullMessage = message.split("##");
 
-		// Sends an ack to sender for received message
-		if (!fullMessage[1].equals("ack")) {
-			ackmanager.sendOnce(fullMessage[0] + "##ack##", dp.getAddress(),
-					dp.getPort());
+		Packet packet;
+		try {
+			packet = PacketParser.parse(message);
+		} catch (Exception e) {
+			System.out.println("Bad packet: " + message);
+			return;
 		}
-		String command = fullMessage[1];
-
-		if (ackmanager.addAck(Integer.parseInt(fullMessage[0]))) {
-			if (command.equals("C")) { // Chatt
-				chat.updateChat(fullMessage[2]);
-			} else if (command.equals("T")) { // Turn to play
-				myTurn = true;
-			} else if (command.equals("JOIN")) {
-				// Läs in parametrar som skickats
-				int bigBlind = Integer.parseInt(fullMessage[2]);
-				List<Player> players = new ArrayList<Player>();
-				StringBuilder sb = new StringBuilder();
-				for (int i = 3; i < fullMessage.length; i++) {
-					sb.append(fullMessage[i]);
-				}
-				String listParam = sb.toString();
-				String[] playerParams = listParam.split("#1#");
-				for (int i = 0; i < playerParams.length; i++) {
-					players.add(Player.deserialize(playerParams[i], "#2#"));
-				}
-				
-				//Anropa rätt funktion i Gui
-				gui.joinedTable(bigBlind, players);
-			}
+		int packetNbr = packet.getPacketNbr();
+		
+		if (packet instanceof AckPacket) {
+			ackmanager.addAck(packetNbr);
+		} else {
+			ackmanager.sendOnce(
+					new AckPacket(packetNbr).toString(),
+					dp.getAddress(), dp.getPort());
+		}
+		
+		if (false == receivedPackets.contains(packetNbr)) {
+			receivedPackets.add(packetNbr);
+			packet.runClient(gui);
 		}
 	}
 }

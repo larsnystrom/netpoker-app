@@ -8,6 +8,8 @@ import java.net.SocketException;
 import java.util.HashSet;
 
 import client.chat.gui.ChatPanel;
+import client.texasholdem.gui.Gui;
+
 import javax.swing.JFrame;
 
 import model.udpconnection.AckManager;

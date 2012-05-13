@@ -1,12 +1,20 @@
 package tests;
 
+import server.udpconnection.ClientInfo;
+import model.texasholdem.Client;
 import model.texasholdem.Player;
 import model.texasholdem.Table;
 import model.texasholdem.bots.DummyBot;
+import client.texasholdem.clients.DummyClient;
 import client.texasholdem.gui.Gui;
 
 public class TestGui {
 	public static void main(String[] args) {
+
+		
+		TestGui test = new TestGui();
+		
+		
 
 		String[] playerNames = new String[4];
 		playerNames[0] = "Lars";
@@ -14,10 +22,14 @@ public class TestGui {
 		playerNames[2] = "Bagge";
 		playerNames[3] = "KG";
 		
-		Gui gui1 = new Gui(playerNames);
-		Gui gui2 = new Gui(playerNames);
-		Gui gui3 = new Gui(playerNames);
-		Gui gui4 = new Gui(playerNames);
+		
+		
+		test.startClient(playerNames);
+		
+		
+		Client gui2 = new DummyBot();
+		Client gui3 = new DummyBot();
+		Client gui4 = new DummyBot();
 
 		Table table = new Table(2);
 
@@ -32,5 +44,18 @@ public class TestGui {
 		table.addPlayer(player4);
 
 		table.start();
+	}
+	
+	public TestGui() {
+		
+	}
+	
+	public void startClient(String[] playerNames) {
+		
+		Gui gui1 = new Gui(playerNames);
+	}
+	
+	public void startServer() {
+		ClientInfo client1 = new ClientInfo();
 	}
 }

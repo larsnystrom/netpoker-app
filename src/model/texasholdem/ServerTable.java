@@ -42,8 +42,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import model.udpconnection.SenderThread;
-
 /**
  * Limit Texas Hold'em poker table.
  * 
@@ -51,7 +49,7 @@ import model.udpconnection.SenderThread;
  * 
  * @author Oscar Stigter
  */
-public class Table {
+public class ServerTable {
     
     /** The maximum number of bets or raises in a single hand per player. */
     private static final int MAX_RAISES = 4;
@@ -60,10 +58,10 @@ public class Table {
     private final int bigBlind;
     
     /** The players at the table. */
-    private final List<Player> players;
+    private final List<RemotePlayer> players;
     
     /** The active players in the current hand. */
-    private final List<Player> activePlayers;
+    private final List<RemotePlayer> activePlayers;
     
     /** The deck of cards. */
     private final Deck deck;
@@ -75,13 +73,13 @@ public class Table {
     private int dealerPosition;
 
     /** The current dealer. */
-    private Player dealer;
+    private RemotePlayer dealer;
 
     /** The position of the acting player. */
     private int actorPosition;
     
     /** The acting player. */
-    private Player actor;
+    private RemotePlayer actor;
 
     /** The minimum bet in the current hand. */
     private int minBet;
@@ -101,10 +99,10 @@ public class Table {
      * @param bigBlind
      *            The size of the big blind.
      */
-    public Table(int bigBlind) {
+    public ServerTable(int bigBlind) {
         this.bigBlind = bigBlind;
-        players = new ArrayList<Player>();
-        activePlayers = new ArrayList<Player>();
+        players = new ArrayList<RemotePlayer>();
+        activePlayers = new ArrayList<RemotePlayer>();
         deck = new Deck();
         board = new ArrayList<Card>();
     }
@@ -115,7 +113,7 @@ public class Table {
      * @param player
      *            The player.
      */
-    public void addPlayer(Player player) {
+    public void addPlayer(RemotePlayer player) {
         players.add(player);
     }
     
@@ -137,20 +135,8 @@ public class Table {
         dealerPosition = -1;
         actorPosition = -1;
         gameOver = false;
-        
-        SenderThread[] senders = new SenderThread[4];
-        int i = 0;
-        for (Player player : players) {
+        for (RemotePlayer player : players) {
             player.getClient().joinedTable(bigBlind, players);
-            senders[i++] = player.getClient().getCurrentSender();
-        }
-        for (SenderThread s : senders) {
-        	try {
-				s.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
         }
     }
     
@@ -210,7 +196,7 @@ public class Table {
         pot = 0;
         notifyBoardUpdated();
         activePlayers.clear();
-        for (Player player : players) {
+        for (RemotePlayer player : players) {
             player.resetHand();
             if (!player.isBroke()) {
                 activePlayers.add(player);
@@ -222,22 +208,9 @@ public class Table {
         actorPosition = dealerPosition;
         minBet = bigBlind;
         bet = minBet;
-        
-        SenderThread[] senders = new SenderThread[4];
-        int i = 0;
-        for (Player player : players) {
-        	player.getClient().handStarted(dealer);
-            senders[i++] = player.getClient().getCurrentSender();
+        for (RemotePlayer player : players) {
+            player.getClient().handStarted(dealer);
         }
-        for (SenderThread s : senders) {
-        	try {
-				s.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
-        
         notifyPlayersUpdated(false);
         notifyMessage("New hand, %s is the dealer.", dealer);
     }
@@ -251,22 +224,9 @@ public class Table {
                 actorPosition = (actorPosition + 1) % players.size();
                 actor = players.get(actorPosition);
             } while (!activePlayers.contains(actor));
-            
-            SenderThread[] senders = new SenderThread[4];
-            int i = 0;
-            for (Player player : players) {
-            	player.getClient().actorRotated(actor);
-                senders[i++] = player.getClient().getCurrentSender();
+            for (RemotePlayer player : players) {
+                player.getClient().actorRotated(actor);
             }
-            for (SenderThread s : senders) {
-            	try {
-    				s.join();
-    			} catch (InterruptedException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
-            }
-            
         } else {
             // Should never happen.
             throw new IllegalStateException("No active players left");
@@ -298,22 +258,9 @@ public class Table {
      * Deals the Hole Cards.
      */
     private void dealHoleCards() {
-    	
-        SenderThread[] senders = new SenderThread[4];
-        int i = 0;
-        for (Player player : players) {
-        	player.setCards(deck.deal(2));
-            senders[i++] = player.getClient().getCurrentSender();
+        for (RemotePlayer player : players) {
+            player.setCards(deck.deal(2));
         }
-        for (SenderThread s : senders) {
-        	try {
-				s.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
-    	
         notifyPlayersUpdated(false);
         notifyMessage("%s deals the hole cards.", dealer);
     }
@@ -402,7 +349,7 @@ public class Table {
         }
         
         // Reset player's bets.
-        for (Player player : activePlayers) {
+        for (RemotePlayer player : activePlayers) {
             player.resetBet();
         }
         notifyBoardUpdated();
@@ -417,7 +364,7 @@ public class Table {
      * 
      * @return The allowed actions.
      */
-    private Set<Action> getAllowedActions(Player player) {
+    private Set<Action> getAllowedActions(RemotePlayer player) {
         int actorBet = actor.getBet();
         Set<Action> actions = new HashSet<Action>();
         if (bet == 0) {
@@ -452,13 +399,13 @@ public class Table {
 	}
 	System.out.println();
         // Look at each hand value, sorted from highest to lowest.
-        Map<HandValue, List<Player>> rankedPlayers = getRankedPlayers();
+        Map<HandValue, List<RemotePlayer>> rankedPlayers = getRankedPlayers();
         for (HandValue handValue : rankedPlayers.keySet()) {
             // Get players with winning hand value.
-            List<Player> winners = rankedPlayers.get(handValue);
+            List<RemotePlayer> winners = rankedPlayers.get(handValue);
             if (winners.size() == 1) {
                 // Single winner.
-                Player winner = winners.get(0);
+                RemotePlayer winner = winners.get(0);
                 winner.win(pot);
                 notifyBoardUpdated();
                 notifyPlayersUpdated(true);
@@ -468,7 +415,7 @@ public class Table {
                 // Tie; share the pot amongs winners.
                 int tempPot = pot;
                 StringBuilder sb = new StringBuilder("Tie: ");
-                for (Player player : winners) {
+                for (RemotePlayer player : winners) {
                     // Determine the player's share of the pot.
                     int potShare = player.getAllInPot();
                     if (potShare == 0) {
@@ -505,18 +452,18 @@ public class Table {
      * 
      * @return The active players mapped by their hand value (sorted). 
      */
-    private Map<HandValue, List<Player>> getRankedPlayers() {
-	Map<HandValue, List<Player>> winners = new TreeMap<HandValue, List<Player>>();
-	for (Player player : activePlayers) {
+    private Map<HandValue, List<RemotePlayer>> getRankedPlayers() {
+	Map<HandValue, List<RemotePlayer>> winners = new TreeMap<HandValue, List<RemotePlayer>>();
+	for (RemotePlayer player : activePlayers) {
             // Create a hand with the community cards and the player's hole cards.
             Hand hand = new Hand(board);
             hand.addCards(player.getCards());
             // Store the player together with other players with the same hand value.
             HandValue handValue = new HandValue(hand);
             System.out.format("%s: %s\n", player, handValue);
-            List<Player> playerList = winners.get(handValue);
+            List<RemotePlayer> playerList = winners.get(handValue);
             if (playerList == null) {
-        	playerList = new LinkedList<Player>();
+        	playerList = new LinkedList<RemotePlayer>();
             }
             playerList.add(player);
             winners.put(handValue, playerList);
@@ -530,7 +477,7 @@ public class Table {
      * @param player
      *            The winning player.
      */
-    private void playerWins(Player player) {
+    private void playerWins(RemotePlayer player) {
         player.win(pot);
         pot = 0;
         notifyBoardUpdated();
@@ -547,20 +494,8 @@ public class Table {
      */
     private void notifyMessage(String message, Object... args) {
         message = String.format(message, args);
-        
-        SenderThread[] senders = new SenderThread[4];
-        int i = 0;
-        for (Player player : players) {
-        	player.getClient().messageReceived(message);
-            senders[i++] = player.getClient().getCurrentSender();
-        }
-        for (SenderThread s : senders) {
-        	try {
-				s.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        for (RemotePlayer player : players) {
+            player.getClient().messageReceived(message);
         }
     }
     
@@ -568,19 +503,8 @@ public class Table {
      * Notifies clients that the board has been updated.
      */
     private void notifyBoardUpdated() {
-    	SenderThread[] senders = new SenderThread[4];
-        int i = 0;
-        for (Player player : players) {
-        	player.getClient().boardUpdated(board, bet, pot);
-            senders[i++] = player.getClient().getCurrentSender();
-        }
-        for (SenderThread s : senders) {
-        	try {
-				s.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        for (RemotePlayer player : players) {
+            player.getClient().boardUpdated(board, bet, pot);
         }
     }
 
@@ -591,27 +515,13 @@ public class Table {
      * see only a player's public information.
      */
     private void notifyPlayersUpdated(boolean showdown) {
-        for (Player playerToNotify : players) {
-
-            SenderThread[] senders = new SenderThread[4];
-            int i = 0;
-            
-            for (Player player : players) {
+        for (RemotePlayer playerToNotify : players) {
+            for (RemotePlayer player : players) {
                 if (!showdown && !player.equals(playerToNotify)) {
                     // Hide secret information to other players.
                     player = player.publicClone();
                 }
                 playerToNotify.getClient().playerUpdated(player);
-                senders[i++] = playerToNotify.getClient().getCurrentSender();
-            }
-            
-            for (SenderThread s : senders) {
-            	try {
-    				s.join();
-    			} catch (InterruptedException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
             }
         }
     }
@@ -620,24 +530,9 @@ public class Table {
      * Notifies clients that a player has acted.
      */
     private void notifyPlayerActed() {
-
-        SenderThread[] senders = new SenderThread[4];
-        int i = 0;
-        
-        for (Player p : players) {
-            Player playerInfo = p.equals(actor) ? actor : actor.publicClone();
+        for (RemotePlayer p : players) {
+            RemotePlayer playerInfo = p.equals(actor) ? actor : actor.publicClone();
             p.getClient().playerActed(playerInfo);
-
-            senders[i++] = p.getClient().getCurrentSender();
-        }
-        
-        for (SenderThread s : senders) {
-        	try {
-				s.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
         }
     }
     

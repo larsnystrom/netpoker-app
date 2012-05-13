@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import model.texasholdem.bots.DummyBot;
+import model.udpconnection.SenderThread;
 
 
 /**
@@ -166,5 +167,11 @@ public class ConsoleClient implements Client {
         }
         return selectedAction;
     }
+
+	@Override
+	public SenderThread getCurrentSender() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

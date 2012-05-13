@@ -10,11 +10,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import client.udpconnection.UDPClient;
+import model.chat.ChatClient;
+
 
 
 //import texasholdem.Action;
-//import texasholdem.gui.UIConstants;
+import client.texasholdem.gui.UIConstants;
 
 /**
  * Panel with buttons to let a human player select a poker action.
@@ -33,7 +34,7 @@ public class ChatPanel extends JPanel implements ActionListener {
     private String chatlist = "";
     
     /** The UDP client.*/
-    private UDPClient sender;
+    private ChatClient client;
     
     /** The text input field.*/
     private JTextField inputField;
@@ -47,10 +48,10 @@ public class ChatPanel extends JPanel implements ActionListener {
      * @param main
      *            The main frame.
      */
-    public ChatPanel(UDPClient sender) {
-    	this.sender = sender;
+    public ChatPanel(ChatClient client) {
+    	this.client = client;
     	
-        //setBackground(UIConstants.TABLE_COLOR);
+        setBackground(UIConstants.TABLE_COLOR);
         setLayout(new FlowLayout());
 
        
@@ -75,7 +76,7 @@ public class ChatPanel extends JPanel implements ActionListener {
     
     public void updateChat(String message){
     	System.out.print("updateChat "+message +message);
-		chatlist = message + chatlist;
+		chatlist = message + "\n" + chatlist;
 		chatField.setText(chatlist);
     }
  
@@ -84,7 +85,7 @@ public class ChatPanel extends JPanel implements ActionListener {
         if (source == sendButton) {
         	String message = inputField.getText();
         	if(!message.equals("")){
-        		sender.send("C##" + message);
+        		client.sendMessage(message);
         	}
             inputField.setText("");
         } 

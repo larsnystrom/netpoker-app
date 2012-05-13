@@ -1,11 +1,15 @@
 package server.udpconnection;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+import server.texasholdem.clients.ServerClient;
+import server.texasholdem.clients.UdpClient;
+
+import model.texasholdem.Player;
+import model.texasholdem.Table;
 import model.udpconnection.AckManager;
+import model.udpconnection.Packet;
 import model.udpconnection.SenderThread;
 
 public class UDPServer {
@@ -15,63 +19,55 @@ public class UDPServer {
 	DatagramSocket socket;
 	AckManager ackmanager;
 
-	public UDPServer(ClientInfo[] players) {
+	/** The starting cash per player. */
+	private static final int STARTING_CASH = 100;
 
-		// port = players[0].getPortAddress();
-		Chatbox chatbox = new Chatbox(players);
+	/** The size of the big blind. */
+	private static final int BIG_BLIND = 2;
+
+	public UDPServer(ClientInfo[] players) {
 
 		// Create a DatagramSocket
 		try {
 			socket = new DatagramSocket(30000);
 		} catch (SocketException e) {
-			System.out.println("Could not create socket!");
+			System.out.println("Server: Could not create socket!");
 			System.exit(1);
 		}
 
 		ackmanager = new AckManager(socket);
 		
-		// Start chatboxReader
-		ChatReaderThread chatReader = new ChatReaderThread(chatbox, players, ackmanager);
-		chatReader.setName("chatReader");
-		chatReader.start();
+		ServerClient serverClient = new ServerClient(players, ackmanager);
+		// Start receiver thread
+		
+		ServerListenerThread thread = new ServerListenerThread(ackmanager, serverClient);
+		thread.start();		
 
 		// Open firewall for incoming messages from all players
 		for (ClientInfo player : players) {
 			ackmanager.sendOnce("000##X##Opening firewall",
 					player.getAddress(), player.getPortAddress());
 		}
-
-		// Create a DatagramPacket to hold the incoming message
-		byte[] data = new byte[65507];
-		DatagramPacket dp = new DatagramPacket(data, data.length);
-
-		while (true) {
-			// Extract the message and start receiver thread
-			try {
-				System.out.println("UDPServer, Waiting for message ...");
-				socket.receive(dp);
-
-				// Start receiver thread
-				ServerRecieverThread thread = new ServerRecieverThread(
-						ackmanager, dp, chatbox);
-				thread.setName("Thread " + threadName++);
-				thread.start();
-				System.out.println("Started " + thread.getName());
-
-			} catch (IOException e) {
-				System.out.println("An IOException occured: " + e);
-				System.exit(1);
-			}
+		
+		Table table = new Table(BIG_BLIND);
+		Player[] pokerPlayers = new Player[4];
+		
+		for (int i = 0; i < 4; i++) {
+			pokerPlayers[i] = new Player(players[i].getNickName(), STARTING_CASH, new UdpClient(players[i], ackmanager, serverClient));
+			table.addPlayer(pokerPlayers[i]);
 		}
+		
+		table.start();
+		
 	}
 
-	public SenderThread send(String message, ClientInfo player) {
-		
+	public SenderThread send(Packet message, ClientInfo player) {
+
 		// start a SenderThread
 		SenderThread sender = new SenderThread(ackmanager, message,
 				player.getAddress(), player.getPortAddress());
 		sender.start();
-		
+
 		return sender;
 	}
 }

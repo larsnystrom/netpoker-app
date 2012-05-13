@@ -3,12 +3,12 @@ package model.udpconnection;
 import model.chat.ChatClient;
 import model.texasholdem.Action;
 
-public class ActAckPacket extends AckPacket {
-	public static final String command = "ACKACTION";
+public class ActedPacket extends Packet {
+	public static final String command = "ACTED";
 	
 	private Action action;
 	
-	public ActAckPacket(int packetNbr, Action action) {
+	public ActedPacket(int packetNbr, Action action) {
 		super(packetNbr);
 		this.action = action;
 	}
@@ -26,17 +26,18 @@ public class ActAckPacket extends AckPacket {
 		return params;
 	}
 	
-	public static ActAckPacket parse(String message) {
+	public static ActedPacket parse(String message) {
 		String[] parts = split(message);
 		
-		Action action = Action.valueOf(parts[2]);
+		Action action = Action.fromString(parts[2]);
 		
-		return new ActAckPacket(Integer.parseInt(parts[0]), action);
+		return new ActedPacket(Integer.parseInt(parts[0]), action);
 	}
 
 	@Override
 	public void runClient(ChatClient client) {
-		client.actAckSet(action);
+		System.out.println("Action has been received!");
+		client.actedSet(action);
 	}
 	
 	

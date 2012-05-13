@@ -34,7 +34,7 @@ public class Player {
 	private final String name;
 
 	/** Client application responsible for the actual behavior. */
-	private final Client client;
+	protected final Client client;
 
 	/** Hand of cards. */
 	private final Hand hand;
@@ -354,26 +354,57 @@ public class Player {
 	}
 
 	public String serialize(String delimiter) {
-		String s = name + delimiter + cash + delimiter
-				+ hand.serialize("#3#") + delimiter + hasCards + delimiter
-				+ bet + delimiter + raises + delimiter + allInPot
-				+ action.toString() + delimiter + betIncrement;
+		StringBuilder sb = new StringBuilder();
+		sb.append(name);
+		sb.append(delimiter);
 		
-		return s;
+		sb.append(cash);
+		sb.append(delimiter);
+		
+		sb.append(hand.serialize("#3;"));
+		sb.append(delimiter);
+		
+		sb.append(hasCards);
+		sb.append(delimiter);
+		
+		sb.append(bet);
+		sb.append(delimiter);
+		
+		sb.append(raises);
+		sb.append(delimiter);
+		
+		sb.append(allInPot);
+		sb.append(delimiter);
+		
+		if (null != action) {
+			sb.append(action);
+		}
+		sb.append(delimiter);
+		
+		sb.append(betIncrement);
+		
+		return sb.toString();
 
 	}
 
 	public static Player deserialize(String player, String delimiter) {
 		String[] info = player.split(delimiter);
-		Player des = new Player(info[0], Integer.parseInt(info[1]), null, Hand.deserialize(info[2], "#3#"));
+		
+		String playerName = info[0];
+		int startingCash = Integer.parseInt(info[1]);
+		Hand hand = Hand.deserialize(info[2], "#3;");
+		
+		Player des = new Player(playerName, startingCash, null, hand);
 		des.hasCards = Boolean.parseBoolean(info[3]);
 		des.bet = Integer.parseInt(info[4]);
 		des.raises = Integer.parseInt(info[5]);
 		des.allInPot = Integer.parseInt(info[6]);
-		des.action = Action.valueOf(info[7]);
+		if (false == info[7].equals("")) {
+			des.action = Action.fromString(info[7]);
+		}
 		des.betIncrement = Integer.parseInt(info[8]);
 		
-		return null;
+		return des;
 	}
 
 }

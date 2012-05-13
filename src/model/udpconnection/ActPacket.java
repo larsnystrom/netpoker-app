@@ -1,5 +1,6 @@
 package model.udpconnection;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,11 +28,11 @@ public class ActPacket extends Packet {
 		String[] params = new String[1];
 		
 		StringBuilder sb = new StringBuilder();
-		Action[] actions = (Action[]) allowedActions.toArray();
-		for (int i = 0; i < actions.length; i++) {
-			sb.append(actions[i].toString());
-			if (actions.length != i + 1) {
-				sb.append("#1#"); //Action delimiter
+		ArrayList<Action> actions = new ArrayList<Action>(allowedActions);
+		for (int i = 0; i < actions.size(); i++) {
+			sb.append(actions.get(i).toString());
+			if (actions.size() != i + 1) {
+				sb.append("#1;"); //Action delimiter
 			}
 		}
 		params[0] = sb.toString();
@@ -43,9 +44,9 @@ public class ActPacket extends Packet {
 		String[] parts = split(message);
 		Set<Action> allowedActions = new HashSet<Action>();
 		
-		String[] actions = parts[2].split("#1#");
+		String[] actions = parts[2].split("#1;");
 		for (int i = 0; i < actions.length; i++) {
-			allowedActions.add(Action.valueOf(actions[i]));
+			allowedActions.add(Action.fromString(actions[i]));
 		}
 		
 		return new ActPacket(Integer.parseInt(parts[0]), allowedActions);
@@ -54,6 +55,12 @@ public class ActPacket extends Packet {
 	@Override
 	public void runClient(ChatClient client) {
 		Action action = client.act(allowedActions);
+		client.actedSet(action);
+	}
+	
+	@Override
+	public Packet getResponsePacket(int PacketNbr, ChatClient client) {
+		return new ActedPacket(packetNbr, client.actedGet());
 	}
 
 }

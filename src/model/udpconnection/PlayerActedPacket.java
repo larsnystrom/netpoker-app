@@ -21,7 +21,7 @@ public class PlayerActedPacket extends Packet {
 	@Override
 	protected String[] getParameters() {
 		String[] params = new String[1];
-		params[0] = player.serialize("#2#"); //Player attribute delimiter
+		params[0] = player.serialize("#2;"); //Player attribute delimiter
 		
 		return params;
 	}
@@ -29,7 +29,7 @@ public class PlayerActedPacket extends Packet {
 	public static PlayerActedPacket parse(String message) {
 		String[] parts = split(message);
 		
-		Player player = Player.deserialize(parts[2], "#2#");
+		Player player = Player.deserialize(parts[2], "#2;");
 		
 		return new PlayerActedPacket(Integer.parseInt(parts[0]), player);
 	}

@@ -20,8 +20,6 @@ package model.texasholdem;
 import java.util.List;
 import java.util.Set;
 
-import model.udpconnection.SenderThread;
-
 /**
  * A player client showing the table information and acting on behalf of the
  * player.
@@ -30,7 +28,7 @@ import model.udpconnection.SenderThread;
  * 
  * @author Oscar Stigter
  */
-public interface Client {
+public interface RemoteClient {
     
     /**
      * Handles a game message.
@@ -48,7 +46,7 @@ public interface Client {
      * @param players
      *            The players at the table (including this player).
      */
-    void joinedTable(int bigBlind, List<Player> players);
+    void joinedTable(int bigBlind, List<RemotePlayer> players);
     
     /**
      * Handles the start of a new hand.
@@ -56,7 +54,7 @@ public interface Client {
      * @param dealer
      *            The dealer.
      */
-    void handStarted(Player dealer);
+    void handStarted(RemotePlayer dealer);
     
     /**
      * Handles the rotation of the actor (the player who's turn it is).
@@ -64,7 +62,7 @@ public interface Client {
      * @param actor
      *            The new actor.
      */
-    void actorRotated(Player actor);
+    void actorRotated(RemotePlayer actor);
     
     /**
      * Handles an update of this player.
@@ -72,7 +70,7 @@ public interface Client {
      * @param player
      *            The player.
      */
-    void playerUpdated(Player player);
+    void playerUpdated(RemotePlayer player);
     
     /**
      * Handles an update of the board.
@@ -92,7 +90,7 @@ public interface Client {
      * @param player
      *            The player that has acted.
      */
-    void playerActed(Player player);
+    void playerActed(RemotePlayer player);
 
     /**
      * Requests this player to act, selecting one of the allowed actions.
@@ -103,8 +101,5 @@ public interface Client {
      * @return The selected action.
      */
     Action act(Set<Action> allowedActions);
-    
-
-	public SenderThread getCurrentSender();
 
 }

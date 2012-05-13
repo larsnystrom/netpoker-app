@@ -88,7 +88,7 @@ public class ControlPanel extends JPanel implements ActionListener {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 removeAll();
-                add(continueButton);
+//                add(continueButton);
                 validate();
                 repaint();}
         });
@@ -107,12 +107,16 @@ public class ControlPanel extends JPanel implements ActionListener {
      * @return The selected action.
      */
     public Action getUserInput(final Set<Action> allowedActions) {
+    	if (allowedActions.contains(Action.CONTINUE)) {
+    		return Action.CONTINUE;
+    	}
+    	
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 // Show the buttons for the allowed actions.
                 removeAll();
                 if (allowedActions.contains(Action.CONTINUE)) {
-                    add(continueButton);
+//                    add(continueButton);
                 } else {
                     if (allowedActions.contains(Action.CHECK)) {
                         add(checkButton);

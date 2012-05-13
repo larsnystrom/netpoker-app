@@ -35,7 +35,7 @@ public class BoardUpdatedPacket extends Packet {
 		for (int i = 0; i < cards.size(); i++) {
 			sb.append(cards.get(i).toString());
 			if (cards.size() != i + 1) {
-				sb.append("#1#"); //Card delimiter
+				sb.append("#1;"); //Card delimiter
 			}
 		}
 		
@@ -50,9 +50,13 @@ public class BoardUpdatedPacket extends Packet {
 		String[] parts = split(message);
 		
 		ArrayList<Card> cards = new ArrayList<Card>();
-		String[] rawCards = parts[2].split("#1#");
+		System.out.println(parts[2]);
+		
+		String[] rawCards = parts[2].split("#1;");
 		for (int i = 0; i < rawCards.length; i++) {
-			cards.add(new Card(rawCards[i]));
+			if (false == rawCards[i].equals("")) {
+				cards.add(new Card(rawCards[i]));
+			}
 		}
 		int bet = Integer.parseInt(parts[3]);
 		int pot = Integer.parseInt(parts[4]);

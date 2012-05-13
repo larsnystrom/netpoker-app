@@ -20,7 +20,7 @@ public class HandStartedPacket extends Packet {
 	@Override
 	protected String[] getParameters() {
 		String[] params = new String[1];
-		params[0] = player.serialize("#2#"); //Player attribute delimiter
+		params[0] = player.serialize("#2;"); //Player attribute delimiter
 		
 		return params;
 	}
@@ -28,7 +28,7 @@ public class HandStartedPacket extends Packet {
 	public static HandStartedPacket parse(String message) {
 		String[] parts = split(message);
 		
-		Player player = Player.deserialize(parts[2], "#2#");
+		Player player = Player.deserialize(parts[2], "#2;");
 		
 		return new HandStartedPacket(Integer.parseInt(parts[0]), player);
 	}

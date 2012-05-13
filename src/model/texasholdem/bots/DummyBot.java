@@ -23,6 +23,7 @@ import java.util.Set;
 import model.texasholdem.Action;
 import model.texasholdem.Card;
 import model.texasholdem.Player;
+import model.udpconnection.SenderThread;
 
 
 /**
@@ -100,5 +101,11 @@ public class DummyBot extends Bot {
             return Action.CALL;
         }
     }
+
+	@Override
+	public SenderThread getCurrentSender() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

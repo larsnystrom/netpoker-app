@@ -20,6 +20,7 @@ package client.texasholdem.gui;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +28,15 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 
+import client.chat.gui.ChatPanel;
 
 import model.chat.ChatClient;
 import model.texasholdem.Action;
 import model.texasholdem.Card;
-import model.texasholdem.Client;
 import model.texasholdem.Player;
-
+import model.udpconnection.AckManager;
+import model.udpconnection.ChatMessagePacket;
+import model.udpconnection.SenderThread;
 
 /**
  * The game's main frame.
@@ -46,12 +49,6 @@ public class Gui extends JFrame implements ChatClient {
 
 	/** Serial version UID. */
 	private static final long serialVersionUID = 1L;
-
-	/** The starting cash per player. */
-	private static final int STARTING_CASH = 100;
-
-	/** The size of the big blind. */
-	private static final int BIG_BLIND = 2;
 
 	/** The GridBagConstraints. */
 	private final GridBagConstraints gc;
@@ -71,13 +68,31 @@ public class Gui extends JFrame implements ChatClient {
 	/** The current actor's name. */
 	private String actorName;
 
+	private ChatPanel chat;
+
+	private Action latestAction;
+
+	private AckManager ackmanager;
+
+	private InetAddress hostAddress;
+
+	private int hostPort;
+
+	private String thisPlayer;
+
 	/**
 	 * Constructor.
 	 * 
 	 * @throws Exception
 	 */
-	public Gui(String[] playerNames) {
+	public Gui(String thisPlayer, String[] playerNames, AckManager ackmanager,
+			InetAddress hostAddress, int hostPort) {
 		super("Limit Texas Hold'em poker");
+
+		this.ackmanager = ackmanager;
+		this.hostAddress = hostAddress;
+		this.hostPort = hostPort;
+		this.thisPlayer = thisPlayer;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setBackground(UIConstants.TABLE_COLOR);
@@ -117,6 +132,12 @@ public class Gui extends JFrame implements ChatClient {
 			}
 		}
 
+		JFrame chatFrame = new JFrame();
+		chat = new ChatPanel(this);
+		chatFrame.add(chat);
+		chatFrame.pack();
+		chatFrame.setVisible(true);
+
 		// Show the frame.
 		pack();
 		setResizable(false);
@@ -131,7 +152,14 @@ public class Gui extends JFrame implements ChatClient {
 	 */
 	public void joinedTable(int bigBlind, List<Player> players) {
 		for (Player player : players) {
-			PlayerPanel playerPanel = playerPanels.get(player.getName());
+			PlayerPanel playerPanel = null;
+			try {
+				playerPanel = playerPanels.get(player.getName());
+			} catch (NullPointerException e) {
+				System.out.println(player.getName());
+				e.printStackTrace();
+				System.exit(1);
+			}
 			if (playerPanel != null) {
 				playerPanel.update(player);
 			}
@@ -146,7 +174,7 @@ public class Gui extends JFrame implements ChatClient {
 
 	public void messageReceived(String message) {
 		boardPanel.setMessage(message);
-//		boardPanel.waitForUserInput();
+		boardPanel.waitForUserInput();
 	}
 
 	/*
@@ -213,8 +241,8 @@ public class Gui extends JFrame implements ChatClient {
 						action.getVerb()));
 				// FIXME: Determine whether actor is the human player (not by
 				// name).
-				if (!name.equals("Player")) {
-//					boardPanel.waitForUserInput();
+				if (!name.equals(thisPlayer)) {
+					boardPanel.waitForUserInput();
 				}
 			}
 		} else {
@@ -230,7 +258,9 @@ public class Gui extends JFrame implements ChatClient {
 	 */
 	public Action act(Set<Action> allowedActions) {
 		boardPanel.setMessage("Please select an action.");
-		return controlPanel.getUserInput(allowedActions);
+		Action action = controlPanel.getUserInput(allowedActions);
+		controlPanel.waitForUserInput();
+		return action;
 	}
 
 	/**
@@ -292,18 +322,41 @@ public class Gui extends JFrame implements ChatClient {
 
 	@Override
 	public void chatMessage(String message) {
-//		chat.updateChat(message);
+		chat.updateChat(message);
 		System.out.println("CHAT: " + message);
 	}
 
 	@Override
-	public void actAckSet(Action action) {
-		// TODO Auto-generated method stub
-		
+	public synchronized void actedSet(Action action) {
+		latestAction = action;
+		notifyAll();
 	}
 
 	@Override
-	public Action actAckGet() {
+	public synchronized Action actedGet() {
+		while (null == latestAction) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		Action temp = latestAction;
+		latestAction = null;
+		return temp;
+	}
+
+	@Override
+	public void sendMessage(String message) {
+		ChatMessagePacket packet = new ChatMessagePacket(
+				ackmanager.getMessageNbr(), message);
+		ackmanager.send(packet, hostAddress, hostPort);
+
+	}
+
+	@Override
+	public SenderThread getCurrentSender() {
 		// TODO Auto-generated method stub
 		return null;
 	}

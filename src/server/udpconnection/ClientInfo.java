@@ -8,9 +8,10 @@ public class ClientInfo {
 	private InetAddress address;
 	private String nickName;
 
-	public ClientInfo(InetAddress address, int port){
+	public ClientInfo(String nickName, InetAddress address, int port){
 		this.address = address;
 		this.port = port;
+		this.nickName = nickName;
 	}
 	
 	public int getPortAddress() {

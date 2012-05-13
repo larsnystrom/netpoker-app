@@ -20,14 +20,14 @@ public class ActorRotatedPacket extends Packet {
 	@Override
 	protected String[] getParameters() {
 		String[] params = new String[1];
-		params[0] = player.serialize("#2#"); //Player param delimiter
+		params[0] = player.serialize("#2;"); //Player param delimiter
 		
 		return params;
 	}
 
 	public static ActorRotatedPacket parse(String message) {
 		String[] parts = split(message);
-		Player player = Player.deserialize(parts[2], "#2#");
+		Player player = Player.deserialize(parts[2], "#2;");
 		return new ActorRotatedPacket(Integer.parseInt(parts[0]), player);
 	}
 

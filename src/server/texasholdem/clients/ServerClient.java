@@ -1,76 +1,70 @@
 package server.texasholdem.clients;
 
-import java.net.InetAddress;
 import java.util.List;
 import java.util.Set;
 
-import server.udpconnection.Chatbox;
+import server.udpconnection.ClientInfo;
 
 import model.chat.ChatClient;
 import model.texasholdem.Action;
 import model.texasholdem.Card;
 import model.texasholdem.Player;
+import model.udpconnection.AckManager;
+import model.udpconnection.ChatMessagePacket;
+import model.udpconnection.SenderThread;
 
 public class ServerClient implements ChatClient {
-	
-	private Chatbox chatbox;
-	private InetAddress address;
-	private int port;
-	
+
+	private ClientInfo[] clients;
+	private AckManager ackManager;
+
 	private Action latestAction;
-	
-	public ServerClient(Chatbox chatbox) {
-		this.chatbox = chatbox;
-	}
-	
-	public void setClientAddress(InetAddress address) {
-		this.address = address;
-	}
-	
-	public void setClientPort(int port) {
-		this.port = port;
+
+	public ServerClient(ClientInfo[] clients, AckManager ackManager) {
+		this.clients = clients;
+		this.ackManager = ackManager;
 	}
 
 	@Override
 	public void messageReceived(String message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void joinedTable(int bigBlind, List<Player> players) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void handStarted(Player dealer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void actorRotated(Player actor) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void playerUpdated(Player player) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void boardUpdated(List<Card> cards, int bet, int pot) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void playerActed(Player player) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -81,18 +75,36 @@ public class ServerClient implements ChatClient {
 
 	@Override
 	public void chatMessage(String message) {
-//		chatbox.write(message, address, port);
+		System.out.println("Sending chat message to clients...");
+		SenderThread[] senders = new SenderThread[clients.length];
+		System.out.println("Sending chat message");
+		for (int i = 0; i < clients.length; i++) {
+			ChatMessagePacket packet = new ChatMessagePacket(
+					ackManager.getMessageNbr(), message);
+			senders[i] = ackManager.send(packet, clients[i].getAddress(),
+					clients[i].getPortAddress());
+		}
+		System.out.println("Waiting for send...");
 		
+		for (int i = 0; i < senders.length; i++) {
+			try {
+				senders[i].join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Chat message sent to clients!");
 	}
 
 	@Override
-	public synchronized void actAckSet(Action action) {
+	public synchronized void actedSet(Action action) {
 		latestAction = action;
 		notifyAll();
 	}
 
 	@Override
-	public synchronized Action actAckGet() {
+	public synchronized Action actedGet() {
 		while (null == latestAction) {
 			try {
 				wait();
@@ -104,6 +116,18 @@ public class ServerClient implements ChatClient {
 		Action temp = latestAction;
 		latestAction = null;
 		return temp;
+	}
+
+	@Override
+	public void sendMessage(String message) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public SenderThread getCurrentSender() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

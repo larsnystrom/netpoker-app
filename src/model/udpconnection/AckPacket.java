@@ -27,7 +27,7 @@ public class AckPacket extends Packet {
 
 	@Override
 	public void runClient(ChatClient client) {
-		
+		throw new IllegalStateException("You should not call this method...");
 		
 	}
 

@@ -240,6 +240,9 @@ public class Hand {
     }
     
     public static Hand deserialize(String hand, String delimiter) {
+    	if (hand.equals("")) {
+    		return new Hand();
+    	}
     	String[] info = hand.split(delimiter);
     	Card[] des = new Card[info.length];
     	for (int i = 0; i < info.length; i++) {

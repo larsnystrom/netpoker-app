@@ -23,6 +23,7 @@ import java.util.Set;
 import model.texasholdem.Action;
 import model.texasholdem.Card;
 import model.texasholdem.Player;
+import model.udpconnection.SenderThread;
 
 
 /**
@@ -145,5 +146,11 @@ public class BasicBot extends Bot {
         
         return value;
     }
+
+	@Override
+	public SenderThread getCurrentSender() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

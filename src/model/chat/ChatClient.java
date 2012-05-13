@@ -6,7 +6,10 @@ import model.texasholdem.Client;
 public interface ChatClient extends Client {
 	public void chatMessage(String message);
 	
-	public void actAckSet(Action action);
+	public void sendMessage(String message);
 	
-	public Action actAckGet();
+	public void actedSet(Action action);
+	
+	public Action actedGet();
+	
 }

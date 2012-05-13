@@ -11,10 +11,9 @@ public class SenderThread extends Thread {
 	AckManager ackmanager;
 	InetAddress hostAddress = null;
 	int port;
-	int messageNbr;
-	String message;
+	Packet message;
 
-	public SenderThread(AckManager ackmanager, String message, InetAddress hostAddress, int port) {
+	public SenderThread(AckManager ackmanager, Packet message, InetAddress hostAddress, int port) {
 		this.ackmanager = ackmanager;
 		this.message = message;
 		this.hostAddress = hostAddress;
@@ -24,12 +23,13 @@ public class SenderThread extends Thread {
 
 	public void run() {
 		// Create a DatagramPacket to send
-		messageNbr = ackmanager.getMessageNbr();
-		byte[] outdata = (messageNbr + "##" + message + "\n").getBytes();
+		byte[] outdata = (message + "\n").getBytes();
 		DatagramPacket dp = new DatagramPacket(outdata, outdata.length,
 				hostAddress, port);
 
-		while (!ackmanager.ackRecieved(messageNbr)){
+		int messageNbr = message.getPacketNbr();
+		
+		do {
 
 			// Send the datagram
 			try {
@@ -38,14 +38,8 @@ public class SenderThread extends Thread {
 				System.out.println("An IOException occured: " + e);
 			}
 
-			System.out.println("Sent: " + messageNbr + "##" +message);
+			System.out.println(getName() + " Sent: " + message);
 			
-			try {
-				Thread.sleep(5000L);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		} while (false == ackmanager.waitForAck(messageNbr));
 	}
 }

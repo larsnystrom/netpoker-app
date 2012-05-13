@@ -35,13 +35,13 @@ public abstract class Packet {
 		return sb.toString();
 	}
 	
-	public static String getCommand(String message) throws Exception {
+	public static String getCommand(String message) {
 		String[] parts = message.split(delimiter);
-		if (parts.length > 2) {
+		if (parts.length > 1) {
 			return parts[1];
 		}
 		
-		throw new Exception("Bad packet");
+		return "no command found in packet";
 	}
 	
 	protected static String[] split(String message) {
@@ -49,5 +49,19 @@ public abstract class Packet {
 	}
 	
 	public abstract void runClient(ChatClient client);
+	
+	public Packet getResponsePacket(int packetNbr, ChatClient client) {
+		return null;
+	}
+	
+	public boolean equals(Object o) {
+		if (false == (o instanceof Packet)) {
+			return false;
+		}
+		
+		Packet p = (Packet) o;
+		
+		return p.packetNbr == packetNbr;
+	}
 }
 

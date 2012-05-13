@@ -7,27 +7,27 @@ import java.net.InetAddress;
 import java.util.HashSet;
 
 public class AckManager {
-	
+
 	private DatagramSocket socket;
 	private HashSet<Integer> ackList = new HashSet<Integer>();
 	private Integer messageNbr;
-	
-	public AckManager(DatagramSocket socket){
+
+	public AckManager(DatagramSocket socket) {
 		this.socket = socket;
 		messageNbr = 0;
 	}
-	
-	public DatagramSocket getSocket(){
+
+	public synchronized DatagramSocket getSocket() {
 		return socket;
 	}
-	
-	public synchronized int getMessageNbr(){
+
+	public synchronized int getMessageNbr() {
 		messageNbr = messageNbr + 1;
-		notifyAll();
 		return messageNbr;
 	}
-	
-	public synchronized void sendOnce(String message, InetAddress adress, int port) {
+
+	public synchronized void sendOnce(String message, InetAddress adress,
+			int port) {
 		// Create a DatagramPacket to send
 		byte[] outdata = (message + "\n").getBytes();
 
@@ -41,17 +41,37 @@ public class AckManager {
 		} catch (IOException e) {
 			System.out.println("An IOException occured: " + e);
 		}
-		notifyAll();
 	}
-	
-	public synchronized boolean ackRecieved(int messageNbr){
-		notifyAll();
+
+	public synchronized boolean waitForAck(int messageNbr) {
+		if (false == ackList.contains(messageNbr)) {
+			try {
+				wait(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return ackList.contains(messageNbr);
 	}
-	
-	public synchronized boolean addAck(int messageNbr){
+
+	public synchronized boolean addAck(int messageNbr) {
+		boolean added = ackList.add(messageNbr);
 		notifyAll();
-		return ackList.add(messageNbr);
+		return added;
+	}
+
+	public synchronized SenderThread send(Packet message,
+			InetAddress recipientAddress, int recipientPort) {
+
+		// start a SenderThread
+		SenderThread sender = new SenderThread(this, message, recipientAddress,
+				recipientPort);
+		sender.setName(new Integer(this.getSocket().getLocalPort()).toString());
+		sender.start();
+
+		return sender;
+
 	}
 
 }

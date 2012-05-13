@@ -93,5 +93,27 @@ public enum Action {
     public String toString() {
         return name;
     }
+    
+    public static Action fromString(String string) {
+    	if (string.equals(Action.SMALL_BLIND.getName())) {
+    		return Action.SMALL_BLIND;
+    	} else if (string.equals(Action.BIG_BLIND.getName())) {
+    		return Action.BIG_BLIND;
+    	} else if (string.equals(Action.CHECK.getName())) {
+    		return Action.CHECK;
+    	} else if (string.equals(Action.CALL.getName())) {
+    		return Action.CALL;
+    	} else if (string.equals(Action.BET.getName())) {
+    		return Action.BET;
+    	} else if (string.equals(Action.RAISE.getName())) {
+    		return Action.RAISE;
+    	} else if (string.equals(Action.FOLD.getName())) {
+    		return Action.FOLD;
+    	} else if (string.equals(Action.CONTINUE.getName())) {
+    		return Action.CONTINUE;
+    	} else {
+    		throw new IllegalArgumentException("No such Action");
+    	}
+    }
 
 }

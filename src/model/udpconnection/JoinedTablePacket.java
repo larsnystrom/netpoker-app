@@ -31,9 +31,9 @@ public class JoinedTablePacket extends Packet {
 		
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < players.size(); i++) {
-			sb.append(players.get(i).serialize("#2#")); //Player attribute delimiter
+			sb.append(players.get(i).serialize("#2;")); //Player attribute delimiter
 			if (players.size() != i + 1) {
-				sb.append("#1#"); //Player delimiter
+				sb.append("#1;"); //Player delimiter
 			}
 		}
 		params[1] = sb.toString();
@@ -45,9 +45,9 @@ public class JoinedTablePacket extends Packet {
 		String[] parts = split(message);
 		
 		ArrayList<Player> players = new ArrayList<Player>();
-		String[] rawPlayers = parts[3].split("#1#");
+		String[] rawPlayers = parts[3].split("#1;");
 		for (int i = 0; i < rawPlayers.length; i++) {
-			players.add(Player.deserialize(rawPlayers[i], "#2#"));
+			players.add(Player.deserialize(rawPlayers[i], "#2;"));
 		}
 		
 		int bigBlind = Integer.parseInt(parts[2]);

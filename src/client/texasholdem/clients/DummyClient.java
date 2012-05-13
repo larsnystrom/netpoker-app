@@ -3,12 +3,15 @@ package client.texasholdem.clients;
 import java.util.List;
 import java.util.Set;
 
+import model.chat.ChatClient;
 import model.texasholdem.Action;
 import model.texasholdem.Card;
-import model.texasholdem.Client;
 import model.texasholdem.Player;
+import model.udpconnection.SenderThread;
 
-public class DummyClient implements Client {
+public class DummyClient implements ChatClient {
+	
+	private Action latestAction;
 
 	@Override
 	public void messageReceived(String message) {
@@ -53,7 +56,49 @@ public class DummyClient implements Client {
 	}
 
 	@Override
-	public Action act(Set<Action> allowedActions) {
+	public Action act(Set<Action> actions) {
+        if (actions.contains(Action.CHECK)) {
+            return Action.CHECK;
+        } else {
+            return Action.CALL;
+        }
+	}
+
+	@Override
+	public void chatMessage(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public synchronized void actedSet(Action action) {
+		latestAction = action;
+		notifyAll();
+	}
+
+	@Override
+	public synchronized Action actedGet() {
+		while (null == latestAction) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		Action temp = latestAction;
+		latestAction = null;
+		return temp;
+	}
+
+	@Override
+	public void sendMessage(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public SenderThread getCurrentSender() {
 		// TODO Auto-generated method stub
 		return null;
 	}

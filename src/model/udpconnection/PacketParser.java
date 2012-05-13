@@ -2,7 +2,7 @@ package model.udpconnection;
 
 
 public class PacketParser {
-	public static Packet parse(String message) throws Exception {
+	public static Packet parse(String message) {
 		String command = Packet.getCommand(message);
 		
 		if (ActorRotatedPacket.command.equals(command)) {
@@ -32,8 +32,15 @@ public class PacketParser {
 		} else if (ChatMessagePacket.command.equals(command)) {
 			return ChatMessagePacket.parse(message);
 			
+		} else if (AckPacket.command.equals(command)) {
+			return AckPacket.parse(message);
+			
+		} else if (ActedPacket.command.equals(command)) {
+			return ActedPacket.parse(message);
+		
 		} else {
-			throw new Exception("Invalid command");
+			System.out.println("Invalid command: " + command);
+			return null;
 		}
 	}
 }

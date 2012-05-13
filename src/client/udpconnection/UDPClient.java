@@ -78,10 +78,9 @@ public class UDPClient {
 	}
 
 	public void send(String message) {
-		messageNbr++;
 
 		// start a SenderThread
-		SenderThread sender = new SenderThread(ackmanager, message, hostAddress, messageNbr);
+		SenderThread sender = new SenderThread(ackmanager, message, hostAddress, port);
 		sender.start();
 		
 	}

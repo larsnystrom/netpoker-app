@@ -30,7 +30,6 @@ public class TestUDPClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		String[] playerNames = new String[4];
 		playerNames[0] = "Lars";
 		playerNames[1] = "Olle";

@@ -1,14 +1,11 @@
 package client.udpconnection;
 
 import java.net.DatagramPacket;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import client.chat.gui.ChatPanel;
 import client.texasholdem.gui.Gui;
 
-import model.texasholdem.Player;
 import model.udpconnection.AckManager;
 import model.udpconnection.AckPacket;
 import model.udpconnection.Packet;
@@ -43,6 +40,7 @@ public class ClientRecieverThread extends Thread {
 			System.out.println("Bad packet: " + message);
 			return;
 		}
+		
 		int packetNbr = packet.getPacketNbr();
 		
 		if (packet instanceof AckPacket) {

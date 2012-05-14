@@ -28,9 +28,6 @@ public class ChatPanel extends JPanel implements ActionListener, KeyListener {
     /** The Send Button. */
     private final JButton sendButton;
     
-    /** The Chat String. */
-    private String chatlist = "";
-    
     /** The UDP client.*/
     private ChatClient client;
     
@@ -75,9 +72,12 @@ public class ChatPanel extends JPanel implements ActionListener, KeyListener {
     }
     
     public void updateChat(String message){
-    	System.out.println("updateChat "+message +message);
-		chatlist = message + "\n" + chatlist;
-		chatField.setText(chatlist);
+    	if (chatField.getText().length() != 0) {
+			message = "\n" + message;
+		}
+    	chatField.append(message);
+		chatField.setCaretPosition(chatField.getDocument()
+				.getLength());
     }
     
     public void actionPerformed(ActionEvent e) {

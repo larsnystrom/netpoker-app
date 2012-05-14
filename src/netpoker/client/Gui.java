@@ -18,6 +18,7 @@
 package netpoker.client;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.net.InetAddress;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.AbstractButton;
 import javax.swing.JFrame;
 
 import netpoker.model.Action;
@@ -131,15 +133,18 @@ public class Gui extends JFrame implements ChatClient {
 		}
 
 		JFrame chatFrame = new JFrame();
+		chatFrame.setResizable(false);
 		chat = new ChatPanel(this);
 		chatFrame.add(chat);
-		chatFrame.setUndecorated(true);
+		
+		// Set to ignore the button
+		chatFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		chatFrame.setAlwaysOnTop(true);
 		chatFrame.setLocationByPlatform(true);
-		chatFrame.setSize(400, 120);
+		chatFrame.setSize(400, 160);
 		chatFrame.setVisible(true);
 
-		// Show the frame.
+		// Show the main frame.
 		pack();
 		setResizable(false);
 		setLocationRelativeTo(null);

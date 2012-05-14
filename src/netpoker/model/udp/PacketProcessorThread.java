@@ -27,10 +27,8 @@ public class PacketProcessorThread extends Thread {
 			InetAddress clientAddress = recPacket.getAddress();
 			int clientPort = recPacket.getPort();
 
-
 //			System.out.println(getName() + " Received: " + packet.toString()
 //					+ " from " + clientAddress.toString() + ":" + clientPort);
-
 
 			int packetNbr = packet.getPacketNbr();
 
@@ -38,11 +36,9 @@ public class PacketProcessorThread extends Thread {
 					clientAddress, clientPort);
 
 			if (receivedPackets.add(recPacket)) {
-
 //				System.out.println(getName() + " Runs: " + packet.toString()
 //						+ " from " + clientAddress.toString() + ":"
 //						+ clientPort);
-
 				packet.runClient(client);
 				Packet response = packet.getResponsePacket(
 						ackManager.getMessageNbr(), client);

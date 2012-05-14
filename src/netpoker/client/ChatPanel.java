@@ -13,7 +13,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-
 import netpoker.model.udp.ChatClient;
 
 /**
@@ -52,6 +51,7 @@ public class ChatPanel extends JPanel implements ActionListener, KeyListener {
     	
         setBackground(UIConstants.TABLE_COLOR);
         setLayout(new FlowLayout());
+        
         
         chatField = new JTextArea(5,30);
         chatField.setLineWrap(true);

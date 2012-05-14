@@ -1,6 +1,7 @@
 package netpoker.model.udp;
 
 
+
 public class MessageReceivedPacket extends Packet {
 	public static final String command = "MESSAGE";
 	private String message;

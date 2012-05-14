@@ -1,5 +1,5 @@
 
-package netpoker.client.gui;
+package netpoker.client;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;

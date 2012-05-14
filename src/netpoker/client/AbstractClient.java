@@ -1,4 +1,4 @@
-package netpoker.client.gui;
+package netpoker.client;
 
 import netpoker.model.Action;
 import netpoker.model.udp.ChatClient;

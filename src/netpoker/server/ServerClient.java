@@ -1,4 +1,4 @@
-package netpoker.server.clients;
+package netpoker.server;
 
 import java.util.List;
 import java.util.Set;
@@ -10,7 +10,6 @@ import netpoker.model.udp.AckManager;
 import netpoker.model.udp.ChatClient;
 import netpoker.model.udp.ChatMessagePacket;
 import netpoker.model.udp.SenderThread;
-import netpoker.server.udp.ClientInfo;
 
 
 

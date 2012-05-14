@@ -1,4 +1,4 @@
-package netpoker.server.udp;
+package netpoker.server;
 
 import netpoker.model.Player;
 import netpoker.model.Table;
@@ -6,8 +6,6 @@ import netpoker.model.udp.AckManager;
 import netpoker.model.udp.ListenerThread;
 import netpoker.model.udp.Packet;
 import netpoker.model.udp.SenderThread;
-import netpoker.server.clients.RemoteClient;
-import netpoker.server.clients.ServerClient;
 
 
 public class UDPServer {

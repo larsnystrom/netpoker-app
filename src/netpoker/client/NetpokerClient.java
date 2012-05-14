@@ -1,8 +1,7 @@
-package netpoker.client.udp;
+package netpoker.client;
 
 import java.net.InetAddress;
 
-import netpoker.client.gui.Gui;
 import netpoker.model.udp.AckManager;
 import netpoker.model.udp.ListenerThread;
 

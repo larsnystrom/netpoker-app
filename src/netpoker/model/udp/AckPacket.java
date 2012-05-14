@@ -1,6 +1,7 @@
 package netpoker.model.udp;
 
 
+
 public class AckPacket extends Packet {
 	public static final String command = "ACK";
 

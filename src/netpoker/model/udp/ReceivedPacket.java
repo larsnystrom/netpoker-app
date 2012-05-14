@@ -2,6 +2,7 @@ package netpoker.model.udp;
 
 import java.net.InetAddress;
 
+
 public class ReceivedPacket {
 	private Packet packet;
 	private InetAddress remoteAddress;

@@ -1,4 +1,4 @@
-package netpoker.server.udp;
+package netpoker.server;
 
 import java.net.InetAddress;
 

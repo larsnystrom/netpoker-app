@@ -1,6 +1,7 @@
 package netpoker.model.udp;
 
 
+
 public abstract class Packet {
 	protected int packetNbr;
 	

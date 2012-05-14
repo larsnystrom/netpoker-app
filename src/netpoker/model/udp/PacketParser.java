@@ -1,6 +1,7 @@
 package netpoker.model.udp;
 
 
+
 public class PacketParser {
 	public static Packet parse(String message) {
 		String command = Packet.getCommand(message);

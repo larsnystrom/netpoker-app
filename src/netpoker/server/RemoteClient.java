@@ -1,4 +1,4 @@
-package netpoker.server.clients;
+package netpoker.server;
 
 import java.util.List;
 import java.util.Set;
@@ -17,7 +17,6 @@ import netpoker.model.udp.MessageReceivedPacket;
 import netpoker.model.udp.PlayerActedPacket;
 import netpoker.model.udp.PlayerUpdatedPacket;
 import netpoker.model.udp.SenderThread;
-import netpoker.server.udp.ClientInfo;
 
 
 

@@ -75,6 +75,7 @@ public class ControlPanel extends JPanel implements ActionListener {
         setBackground(UIConstants.TABLE_COLOR);
         setLayout(new FlowLayout());
         continueButton = createActionButton(Action.CONTINUE);
+        continueButton.setEnabled(false);
         checkButton = createActionButton(Action.CHECK);
         callButton = createActionButton(Action.CALL);
         betButton = createActionButton(Action.BET);
@@ -89,9 +90,11 @@ public class ControlPanel extends JPanel implements ActionListener {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 removeAll();
-//                add(continueButton);
+                add(continueButton);
+                
                 validate();
-                repaint();}
+                repaint();
+                }
         });
         Set<Action> allowedActions = new HashSet<Action>();
         allowedActions.add(Action.CONTINUE);
@@ -117,7 +120,7 @@ public class ControlPanel extends JPanel implements ActionListener {
                 // Show the buttons for the allowed actions.
                 removeAll();
                 if (allowedActions.contains(Action.CONTINUE)) {
-//                    add(continueButton);
+                    add(continueButton);
                 } else {
                     if (allowedActions.contains(Action.CHECK)) {
                         add(checkButton);
@@ -135,6 +138,7 @@ public class ControlPanel extends JPanel implements ActionListener {
                         add(foldButton);
                     }
                 }
+
                 validate();
                 repaint();
             }

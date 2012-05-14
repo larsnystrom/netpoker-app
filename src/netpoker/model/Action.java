@@ -46,7 +46,7 @@ public enum Action {
     FOLD("Fold", "folds"),
     
     /** Continuing the game. */
-    CONTINUE("Continue", "continues"),
+    CONTINUE("Please wait for the other player", "is waiting"),
     
     ;
     

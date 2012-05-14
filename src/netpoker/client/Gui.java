@@ -322,7 +322,7 @@ public class Gui extends JFrame implements ChatClient {
 	}
 
 	@Override
-	public void chatMessage(String message, String username) {
+	public synchronized void chatMessage(String message, String username) {
 		chat.updateChat(username + ": " + message);
 	}
 
@@ -348,7 +348,7 @@ public class Gui extends JFrame implements ChatClient {
 	}
 
 	@Override
-	public void sendMessage(String message) {
+	public synchronized void sendMessage(String message) {
 		ChatMessagePacket packet = new ChatMessagePacket(
 				ackmanager.getMessageNbr(), message, thisPlayer);
 		ackmanager.send(packet, hostAddress, hostPort);

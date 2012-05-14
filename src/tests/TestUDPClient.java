@@ -65,7 +65,7 @@ public class TestUDPClient {
 		playerNames[0] = "Lars";
 		playerNames[1] = "Olle";
 		playerNames[2] = "Bagge";
-		playerNames[3] = "KG";
+		playerNames[3] = "K-G";
 
 		// --------------------------
 		// Step 2: Start clients

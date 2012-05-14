@@ -8,7 +8,7 @@ import netpoker.model.udp.Packet;
 import netpoker.model.udp.SenderThread;
 
 
-public class UDPServer {
+public class NetpokerServer {
 	private AckManager ackmanager;
 
 	/** The starting cash per player. */
@@ -17,7 +17,7 @@ public class UDPServer {
 	/** The size of the big blind. */
 	private static final int BIG_BLIND = 2;
 
-	public UDPServer() {
+	public NetpokerServer() {
 		ackmanager = new AckManager();
 	}
 

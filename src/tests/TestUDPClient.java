@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 import netpoker.client.NetpokerClient;
 import netpoker.client.dummy.DummyNetpokerClient;
 import netpoker.server.ClientInfo;
-import netpoker.server.UDPServer;
+import netpoker.server.NetpokerServer;
 
 public class TestUDPClient {
 
@@ -42,7 +42,7 @@ public class TestUDPClient {
 		// Step 1: Setup server
 		// --------------------------
 
-		UDPServer server = new UDPServer();
+		NetpokerServer server = new NetpokerServer();
 
 		int serverPort = server.getPort(); 
 

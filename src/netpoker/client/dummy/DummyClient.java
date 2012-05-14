@@ -1,4 +1,4 @@
-package netpoker.client.clients;
+package netpoker.client.dummy;
 
 import java.util.List;
 import java.util.Set;

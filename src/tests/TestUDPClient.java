@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 
-import netpoker.client.udp.DummyNetpokerClient;
+import netpoker.client.dummy.DummyNetpokerClient;
 import netpoker.client.udp.NetpokerClient;
 import netpoker.server.udp.ClientInfo;
 import netpoker.server.udp.UDPServer;

@@ -354,7 +354,6 @@ public class Gui extends JFrame implements ChatClient {
 		ChatMessagePacket packet = new ChatMessagePacket(
 				ackmanager.getMessageNbr(), message, thisPlayer);
 		ackmanager.send(packet, hostAddress, hostPort);
-
 	}
 
 	@Override

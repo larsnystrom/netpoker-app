@@ -4,11 +4,12 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 
-import server.udpconnection.ClientInfo;
-import server.udpconnection.UDPServer;
+import netpoker.client.udp.DummyNetpokerClient;
+import netpoker.client.udp.NetpokerClient;
+import netpoker.server.udp.ClientInfo;
+import netpoker.server.udp.UDPServer;
 
-import client.udpconnection.DummyUDPClient;
-import client.udpconnection.UDPClient;
+
 
 public class TestUDPClient {
 
@@ -78,16 +79,16 @@ public class TestUDPClient {
 		// INPUT: server's address
 		// INPUT: server's port
 
-		UDPClient client1 = new UDPClient(playerNames[0], playerNames, serverAddress,
+		NetpokerClient client1 = new NetpokerClient(playerNames[0], playerNames, serverAddress,
 				serverPort);
 		
-		DummyUDPClient client2 = new DummyUDPClient(playerNames[1], playerNames,
+		DummyNetpokerClient client2 = new DummyNetpokerClient(playerNames[1], playerNames,
 				serverAddress, serverPort);
 		
-		DummyUDPClient client3 = new DummyUDPClient(playerNames[2], playerNames,
+		DummyNetpokerClient client3 = new DummyNetpokerClient(playerNames[2], playerNames,
 				serverAddress, serverPort);
 		
-		DummyUDPClient client4 = new DummyUDPClient(playerNames[3], playerNames,
+		DummyNetpokerClient client4 = new DummyNetpokerClient(playerNames[3], playerNames,
 				serverAddress, serverPort);
 		
 		// OUTPUT: client port

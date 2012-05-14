@@ -29,6 +29,8 @@ public class PacketProcessorThread extends Thread {
 			InetAddress clientAddress = recPacket.getAddress();
 			int clientPort = recPacket.getPort();
 			
+			System.out.println("Received: " + packet.toString());
+			
 			int packetNbr = packet.getPacketNbr();
 			
 			ackManager.sendOnce(new AckPacket(packetNbr).toString(),

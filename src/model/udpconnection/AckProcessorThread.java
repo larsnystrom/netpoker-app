@@ -17,10 +17,7 @@ public class AckProcessorThread extends Thread {
 
 			int packetNbr = packet.getPacketNbr();
 			
-			System.out.println("Processing: " + packet.toString());
-			
 			ackManager.addAck(packetNbr);
-			System.out.println(this.getName() + " received ACK: " + packetNbr);
 		}
 	}
 }

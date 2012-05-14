@@ -65,7 +65,7 @@ public class DummyClient implements ChatClient {
 	}
 
 	@Override
-	public void chatMessage(String message) {
+	public void chatMessage(String message, String username) {
 		// TODO Auto-generated method stub
 		
 	}

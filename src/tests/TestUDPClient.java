@@ -19,20 +19,46 @@ public class TestUDPClient {
 
 	public static void main(String[] args) {
 		// --------------------------
-		// This part simulates the start of all clients
+		// Step 0: Lobby should know
+		// the server's and all clients
+		// addresses
 		// --------------------------
-		if (args.length != 2) {
-			System.out.println("Usage: java SendUDP <hostname> <port>");
-			System.exit(1);
-		}
+
+		InetAddress serverAddress = null;
+		InetAddress client1Address = null;
+		InetAddress client2Address = null;
+		InetAddress client3Address = null;
+		InetAddress client4Address = null;
 
 		try {
-			hostAddress = InetAddress.getByName(args[0]);
+			serverAddress = InetAddress.getByName("localhost");
+			client1Address = InetAddress.getByName("localhost");
+			client2Address = InetAddress.getByName("localhost");
+			client3Address = InetAddress.getByName("localhost");
+			client4Address = InetAddress.getByName("localhost");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		// --------------------------
+		// Step 0 END
+		// --------------------------
+
+		// --------------------------
+		// Step 1: Setup server
+		// --------------------------
+
+		UDPServer server = new UDPServer();
+
+		int serverPort = server.getPort(); 
+
+		// --------------------------
+		// Step 1 END
+		// --------------------------
 		
+		// Send server's port and address, 
+		// and all players' names to all clients
 		
 		String[] playerNames = new String[4];
 		playerNames[0] = "Lars";
@@ -40,12 +66,37 @@ public class TestUDPClient {
 		playerNames[2] = "Bagge";
 		playerNames[3] = "KG";
 
-		port = Integer.parseInt(args[1]);
-		UDPClient client1 = new UDPClient("Lars", playerNames, hostAddress, port);
-		DummyUDPClient client2 = new DummyUDPClient("Olle", playerNames, hostAddress, port);
-		DummyUDPClient client3 = new DummyUDPClient("Bagge", playerNames, hostAddress, port);
-		DummyUDPClient client4 = new DummyUDPClient("KG", playerNames, hostAddress, port);
+		// --------------------------
+		// Step 2: Start clients
+		// This can be done simultaneously
+		// Each client needs to know
+		// all players' names and their own name
+		// --------------------------
+		
+		// INPUT: playerNames
+		// INPUT: this player's name
+		// INPUT: server's address
+		// INPUT: server's port
 
+		UDPClient client1 = new UDPClient(playerNames[0], playerNames, serverAddress,
+				serverPort);
+		
+		DummyUDPClient client2 = new DummyUDPClient(playerNames[1], playerNames,
+				serverAddress, serverPort);
+		
+		DummyUDPClient client3 = new DummyUDPClient(playerNames[2], playerNames,
+				serverAddress, serverPort);
+		
+		DummyUDPClient client4 = new DummyUDPClient(playerNames[3], playerNames,
+				serverAddress, serverPort);
+		
+		// OUTPUT: client port
+
+		// --------------------------
+		// Step 2 END
+		// --------------------------
+
+		// Send clients' port numbers to the server
 		int[] playerPorts = new int[4];
 		playerPorts[0] = client1.getPortAddress();
 		playerPorts[1] = client2.getPortAddress();
@@ -53,33 +104,28 @@ public class TestUDPClient {
 		playerPorts[3] = client4.getPortAddress();
 
 		// --------------------------
-		// End of client simulation
+		// Step 3: Tell the server client
+		// ports and start the game
 		// --------------------------
 		
-		
-		for (int i = 0; i < 4; i++) {
-			System.out.println("Client " + i + ": " + playerPorts[i]);
-		}
+		// INPUT: Players' port numbers
+		// INPUT: playerNames
 
-		// --------------------------
-		// Server start simulation
-		// --------------------------
-		
-		
-		
 		ClientInfo[] players = new ClientInfo[4];
-		players[0] = new ClientInfo(playerNames[0], hostAddress, playerPorts[0]);
-		players[1] = new ClientInfo(playerNames[1], hostAddress, playerPorts[1]);
-		players[2] = new ClientInfo(playerNames[2], hostAddress, playerPorts[2]);
-		players[3] = new ClientInfo(playerNames[3], hostAddress, playerPorts[3]);
-		
-		UDPServer server = new UDPServer(players);
-		
+		players[0] = new ClientInfo(playerNames[0], client1Address,
+				playerPorts[0]);
+		players[1] = new ClientInfo(playerNames[1], client2Address,
+				playerPorts[1]);
+		players[2] = new ClientInfo(playerNames[2], client3Address,
+				playerPorts[2]);
+		players[3] = new ClientInfo(playerNames[3], client4Address,
+				playerPorts[3]);
+
+		server.startGame(players);
 
 		// --------------------------
-		// End server start simulation
+		// Step 3 END
 		// --------------------------
-		
 
 	}
 }

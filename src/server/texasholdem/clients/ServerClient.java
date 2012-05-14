@@ -74,17 +74,15 @@ public class ServerClient implements ChatClient {
 	}
 
 	@Override
-	public void chatMessage(String message) {
-		System.out.println("Sending chat message to clients...");
+	public void chatMessage(String message, String username) {
 		SenderThread[] senders = new SenderThread[clients.length];
-		System.out.println("Sending chat message");
+		
 		for (int i = 0; i < clients.length; i++) {
 			ChatMessagePacket packet = new ChatMessagePacket(
-					ackManager.getMessageNbr(), message);
+					ackManager.getMessageNbr(), message, username);
 			senders[i] = ackManager.send(packet, clients[i].getAddress(),
 					clients[i].getPortAddress());
 		}
-		System.out.println("Waiting for send...");
 		
 		for (int i = 0; i < senders.length; i++) {
 			try {
@@ -94,7 +92,6 @@ public class ServerClient implements ChatClient {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Chat message sent to clients!");
 	}
 
 	@Override

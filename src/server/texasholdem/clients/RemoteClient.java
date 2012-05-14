@@ -20,14 +20,14 @@ import model.udpconnection.PlayerActedPacket;
 import model.udpconnection.PlayerUpdatedPacket;
 import model.udpconnection.SenderThread;
 
-public class UdpClient implements ChatClient {
+public class RemoteClient implements ChatClient {
 	private ClientInfo clientInfo;
 	private AckManager ackManager;
 	private ServerClient serverClient;
 
 	private SenderThread currentSender;
 
-	public UdpClient(ClientInfo clientInfo, AckManager ackManager,
+	public RemoteClient(ClientInfo clientInfo, AckManager ackManager,
 			ServerClient serverClient) {
 		this.clientInfo = clientInfo;
 		this.ackManager = ackManager;
@@ -113,7 +113,7 @@ public class UdpClient implements ChatClient {
 	}
 
 	@Override
-	public void chatMessage(String message) {
+	public void chatMessage(String message, String username) {
 		// TODO Auto-generated method stub
 		
 	}

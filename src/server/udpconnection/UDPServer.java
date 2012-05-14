@@ -1,23 +1,17 @@
 package server.udpconnection;
 
-import java.net.DatagramSocket;
-import java.net.SocketException;
-
 import server.texasholdem.clients.ServerClient;
-import server.texasholdem.clients.UdpClient;
+import server.texasholdem.clients.RemoteClient;
 
 import model.texasholdem.Player;
 import model.texasholdem.Table;
 import model.udpconnection.AckManager;
+import model.udpconnection.ListenerThread;
 import model.udpconnection.Packet;
 import model.udpconnection.SenderThread;
 
 public class UDPServer {
-
-	int port = 30000;
-	int threadName = 0;
-	DatagramSocket socket;
-	AckManager ackmanager;
+	private AckManager ackmanager;
 
 	/** The starting cash per player. */
 	private static final int STARTING_CASH = 100;
@@ -25,40 +19,39 @@ public class UDPServer {
 	/** The size of the big blind. */
 	private static final int BIG_BLIND = 2;
 
-	public UDPServer(ClientInfo[] players) {
+	public UDPServer() {
+		ackmanager = new AckManager();
+	}
 
-		// Create a DatagramSocket
-		try {
-			socket = new DatagramSocket(30000);
-		} catch (SocketException e) {
-			System.out.println("Server: Could not create socket!");
-			System.exit(1);
-		}
-
-		ackmanager = new AckManager(socket);
+	public void startGame(ClientInfo[] players) {
 		
 		ServerClient serverClient = new ServerClient(players, ackmanager);
-		// Start receiver thread
 		
-		ServerListenerThread thread = new ServerListenerThread(ackmanager, serverClient);
-		thread.start();		
-
+		// Start receiver thread
+		ListenerThread thread = new ListenerThread(ackmanager, serverClient);
+		thread.start();
+		
 		// Open firewall for incoming messages from all players
 		for (ClientInfo player : players) {
 			ackmanager.sendOnce("000##X##Opening firewall",
 					player.getAddress(), player.getPortAddress());
 		}
-		
+
 		Table table = new Table(BIG_BLIND);
 		Player[] pokerPlayers = new Player[4];
-		
+
 		for (int i = 0; i < 4; i++) {
-			pokerPlayers[i] = new Player(players[i].getNickName(), STARTING_CASH, new UdpClient(players[i], ackmanager, serverClient));
+			pokerPlayers[i] = new Player(players[i].getNickName(),
+					STARTING_CASH, new RemoteClient(players[i], ackmanager,
+							serverClient));
 			table.addPlayer(pokerPlayers[i]);
 		}
-		
+
 		table.start();
-		
+	}
+
+	public int getPort() {
+		return ackmanager.getSocket().getLocalPort();
 	}
 
 	public SenderThread send(Packet message, ClientInfo player) {

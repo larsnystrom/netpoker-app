@@ -1,23 +1,13 @@
-package server.udpconnection;
+package model.udpconnection;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 import model.chat.ChatClient;
-import model.udpconnection.AckManager;
-import model.udpconnection.AckPacket;
-import model.udpconnection.AckProcessorThread;
-import model.udpconnection.ChatMessagePacket;
-import model.udpconnection.Packet;
-import model.udpconnection.PacketParser;
-import model.udpconnection.PacketProcessorThread;
-import model.udpconnection.PacketsToProcess;
-import model.udpconnection.ProcessedPackets;
-import model.udpconnection.ReceivedPacket;
 
 
-public class ServerListenerThread extends Thread {
+public class ListenerThread extends Thread {
 
 	private DatagramSocket socket;
 	private PacketProcessorThread chatThread;
@@ -27,7 +17,8 @@ public class ServerListenerThread extends Thread {
 	private PacketsToProcess chatQueue;
 	private PacketsToProcess ackQueue;
 
-	public ServerListenerThread(AckManager ackManager, ChatClient client) {
+	public ListenerThread(AckManager ackManager, ChatClient client) {
+		
 		this.socket = ackManager.getSocket();
 
 		ProcessedPackets receivedPackets = new ProcessedPackets();
@@ -50,8 +41,7 @@ public class ServerListenerThread extends Thread {
 			// Create a DatagramPacket to hold the incoming message
 			byte[] data = new byte[65507];
 			DatagramPacket dp = new DatagramPacket(data, data.length);
-
-			System.out.println("UDPClient, Waiting for message ...");
+			
 			try {
 				socket.receive(dp);
 			} catch (IOException e1) {
@@ -60,7 +50,6 @@ public class ServerListenerThread extends Thread {
 			}
 
 			String message = new String(dp.getData(), 0, dp.getLength()).trim();
-			System.out.println(this.getName() + " Message recieved: " + message);
 
 			Packet packet = PacketParser.parse(message);
 

@@ -135,7 +135,10 @@ public class Gui extends JFrame implements ChatClient {
 		JFrame chatFrame = new JFrame();
 		chat = new ChatPanel(this);
 		chatFrame.add(chat);
-		chatFrame.pack();
+		chatFrame.setUndecorated(true);
+		chatFrame.setAlwaysOnTop(true);
+		chatFrame.setLocationByPlatform(true);
+		chatFrame.setSize(400, 120);
 		chatFrame.setVisible(true);
 
 		// Show the frame.
@@ -321,9 +324,8 @@ public class Gui extends JFrame implements ChatClient {
 	}
 
 	@Override
-	public void chatMessage(String message) {
-		chat.updateChat(message);
-		System.out.println("CHAT: " + message);
+	public void chatMessage(String message, String username) {
+		chat.updateChat(username + ": " + message);
 	}
 
 	@Override
@@ -350,7 +352,7 @@ public class Gui extends JFrame implements ChatClient {
 	@Override
 	public void sendMessage(String message) {
 		ChatMessagePacket packet = new ChatMessagePacket(
-				ackmanager.getMessageNbr(), message);
+				ackmanager.getMessageNbr(), message, thisPlayer);
 		ackmanager.send(packet, hostAddress, hostPort);
 
 	}

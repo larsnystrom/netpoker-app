@@ -30,15 +30,12 @@ public class SenderThread extends Thread {
 		int messageNbr = message.getPacketNbr();
 		
 		do {
-
 			// Send the datagram
 			try {
 				socket.send(dp);
 			} catch (IOException e) {
 				System.out.println("An IOException occured: " + e);
 			}
-
-			System.out.println(getName() + " Sent: " + message);
 			
 		} while (false == ackmanager.waitForAck(messageNbr));
 	}

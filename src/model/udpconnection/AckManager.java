@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.HashSet;
 
 public class AckManager {
@@ -12,8 +13,15 @@ public class AckManager {
 	private HashSet<Integer> ackList = new HashSet<Integer>();
 	private Integer messageNbr;
 
-	public AckManager(DatagramSocket socket) {
-		this.socket = socket;
+	public AckManager() {
+		// Create a DatagramSocket on any free port
+		try {
+			socket = new DatagramSocket();
+		} catch (SocketException e) {
+			System.out.println("AckManager: Could not create socket!");
+			e.printStackTrace();
+			System.exit(1);
+		}
 		messageNbr = 0;
 	}
 
@@ -33,7 +41,6 @@ public class AckManager {
 
 		DatagramPacket dpsend = new DatagramPacket(outdata, outdata.length,
 				adress, port);
-		System.out.println("RecThrd sent: " + message);
 
 		// Send the datagram
 		try {

@@ -1,36 +1,18 @@
 package client.udpconnection;
 
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
-import java.util.HashSet;
 
 import client.texasholdem.gui.Gui;
 
 import model.udpconnection.AckManager;
+import model.udpconnection.ListenerThread;
 
 public class UDPClient {
-
-	DatagramSocket socket;
-	AckManager ackmanager;
-	InetAddress hostAddress = null;
-	Boolean myTurn = false;
-	int port;
-	int messageNbr = 0;
-	HashSet<Integer> ackList = new HashSet<Integer>();
+	private AckManager ackmanager;
 
 	public UDPClient(String thisPlayer, String[] playerNames, InetAddress hostAddress, int port) {
-		this.hostAddress = hostAddress;
-		this.port = port;
-		// Create a DatagramSocket on any free port
-		try {
-			socket = new DatagramSocket(); 
-		} catch (SocketException e) {
-			System.out.println("Client: Could not create socket!");
-			System.exit(1);
-		}
 
-		ackmanager = new AckManager(socket);
+		ackmanager = new AckManager();
 
 		Gui gui = new Gui(thisPlayer, playerNames, ackmanager, hostAddress, port);
 		
@@ -40,13 +22,13 @@ public class UDPClient {
 				hostAddress, port);
 
 		// start a ClientReciever
-		ClientListenerThread thread = new ClientListenerThread(ackmanager, gui);
+		ListenerThread thread = new ListenerThread(ackmanager, gui);
 		thread.start();
 	}
 
 
 	public int getPortAddress() {
-		return socket.getLocalPort();
+		return ackmanager.getSocket().getLocalPort();
 	}
 
 }

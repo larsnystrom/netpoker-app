@@ -27,6 +27,7 @@ public class UDPServer {
 		
 		// Start receiver thread
 		ListenerThread thread = new ListenerThread(ackmanager, serverClient);
+		thread.setName("Server");
 		thread.start();
 		
 		// Open firewall for incoming messages from all players

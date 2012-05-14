@@ -27,6 +27,7 @@ public class DummyNetpokerClient {
 
 		// start a ClientReciever
 		ListenerThread thread = new ListenerThread(ackmanager, client);
+		thread.setName(thisPlayer);
 		thread.start();
 		
 	}

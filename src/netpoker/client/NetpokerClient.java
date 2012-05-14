@@ -23,6 +23,7 @@ public class NetpokerClient {
 
 		// start a ClientReciever
 		ListenerThread thread = new ListenerThread(ackmanager, gui);
+		thread.setName(thisPlayer);
 		thread.start();
 	}
 

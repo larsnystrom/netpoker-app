@@ -85,7 +85,7 @@ public class Gui extends JFrame implements ChatClient {
 	 */
 	public Gui(String thisPlayer, String[] playerNames, AckManager ackmanager,
 			InetAddress hostAddress, int hostPort) {
-		super("Limit Texas Hold'em poker");
+		super("Texas Hold'em - " + thisPlayer);
 
 		this.ackmanager = ackmanager;
 		this.hostAddress = hostAddress;
@@ -244,6 +244,7 @@ public class Gui extends JFrame implements ChatClient {
 				// name).
 				if (!name.equals(thisPlayer)) {
 					boardPanel.waitForUserInput();
+					this.pack();
 				}
 			}
 		} else {
@@ -261,6 +262,7 @@ public class Gui extends JFrame implements ChatClient {
 		boardPanel.setMessage("Please select an action.");
 		Action action = controlPanel.getUserInput(allowedActions);
 		controlPanel.waitForUserInput();
+		this.pack();
 		return action;
 	}
 

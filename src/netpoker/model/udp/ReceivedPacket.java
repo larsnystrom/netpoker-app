@@ -2,7 +2,6 @@ package netpoker.model.udp;
 
 import java.net.InetAddress;
 
-
 public class ReceivedPacket {
 	private Packet packet;
 	private InetAddress remoteAddress;
@@ -27,14 +26,17 @@ public class ReceivedPacket {
 		return remotePort;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (false == (o instanceof ReceivedPacket)) {
 			return false;
 		}
-		ReceivedPacket p = (ReceivedPacket) o;
+		return o.hashCode() == this.hashCode();
+	}
 
-		return (p.getPacket().equals(packet))
-				&& (p.getAddress().equals(remoteAddress))
-				&& (p.getPort() == remotePort);
+	@Override
+	public int hashCode() {
+		return packet.getPacketNbr() * 3 + remotePort * 31
+				+ remoteAddress.hashCode() * 17;
 	}
 }

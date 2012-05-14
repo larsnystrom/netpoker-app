@@ -54,6 +54,7 @@ public abstract class Packet {
 		return null;
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if (false == (o instanceof Packet)) {
 			return false;

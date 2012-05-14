@@ -2,21 +2,13 @@ package tests;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashSet;
 
 import netpoker.client.NetpokerClient;
 import netpoker.client.dummy.DummyNetpokerClient;
 import netpoker.server.ClientInfo;
 import netpoker.server.UDPServer;
 
-
-
 public class TestUDPClient {
-
-	static InetAddress hostAddress = null;
-	static int port;
-	static int messageNbr = 0;
-	static HashSet<Integer> ackList = new HashSet<Integer>();
 
 	public static void main(String[] args) {
 		// --------------------------

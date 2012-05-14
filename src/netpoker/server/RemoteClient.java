@@ -93,7 +93,7 @@ public class RemoteClient implements ChatClient {
 		ActPacket packet = new ActPacket(ackManager.getMessageNbr(),
 				allowedActions);
 		currentSender = ackManager.send(packet, clientInfo.getAddress(), clientInfo.getPortAddress());
-		System.out.println("Sending Act packet...");
+		
 		try {
 			currentSender.join();
 		} catch (InterruptedException e) {
@@ -101,11 +101,7 @@ public class RemoteClient implements ChatClient {
 			e.printStackTrace();
 		}
 
-		// By now we should have received an ack
-		System.out.println("Ack has been received, wait for Action...");
-		Action action = serverClient.actedGet();
-		System.out.println("Action has been received, returning.");
-		return action;
+		return serverClient.actedGet();
 	}
 
 	public SenderThread getCurrentSender() {

@@ -22,17 +22,24 @@ public class ListenerThread extends Thread {
 		this.socket = ackManager.getSocket();
 
 		ProcessedPackets receivedPackets = new ProcessedPackets();
+		
 		this.gameQueue = new PacketsToProcess();
 		this.chatQueue = new PacketsToProcess();
 		this.ackQueue = new PacketsToProcess();
+		
 		this.gameThread = new PacketProcessorThread(ackManager, client,
 				receivedPackets, gameQueue);
+		
 		this.chatThread = new PacketProcessorThread(ackManager, client,
 				receivedPackets, chatQueue);
+		
 		this.ackThread = new AckProcessorThread(ackManager, ackQueue);
 	}
 
 	public void run() {
+		this.gameThread.setName(this.getName() + "-game");
+		this.chatThread.setName(this.getName() + "-chat");
+		this.ackThread.setName(this.getName() + "-ack");
 		ackThread.start();
 		chatThread.start();
 		gameThread.start();

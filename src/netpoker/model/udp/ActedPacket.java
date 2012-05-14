@@ -35,7 +35,6 @@ public class ActedPacket extends Packet {
 
 	@Override
 	public void runClient(ChatClient client) {
-		System.out.println("Action has been received!");
 		client.actedSet(action);
 	}
 	

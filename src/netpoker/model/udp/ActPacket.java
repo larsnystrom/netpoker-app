@@ -59,7 +59,7 @@ public class ActPacket extends Packet {
 	}
 	
 	@Override
-	public Packet getResponsePacket(int PacketNbr, ChatClient client) {
+	public Packet getResponsePacket(int packetNbr, ChatClient client) {
 		return new ActedPacket(packetNbr, client.actedGet());
 	}
 

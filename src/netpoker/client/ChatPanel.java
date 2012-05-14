@@ -4,6 +4,9 @@ package netpoker.client;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,7 +25,7 @@ import netpoker.model.udp.ChatClient;
  * 
  * 
  */
-public class ChatPanel extends JPanel implements ActionListener {
+public class ChatPanel extends JPanel implements ActionListener, KeyListener {
     
     /** Serial version UID. */
     private static final long serialVersionUID = 1L;
@@ -53,8 +56,8 @@ public class ChatPanel extends JPanel implements ActionListener {
     	
         setBackground(UIConstants.TABLE_COLOR);
         setLayout(new FlowLayout());
-
-       
+        
+        
         chatField = new JTextArea(5,30);
         chatField.setLineWrap(true);
         chatField.setEditable(false);
@@ -63,10 +66,12 @@ public class ChatPanel extends JPanel implements ActionListener {
         
         inputField = new JTextField(20);
         inputField.setText("");
-
+        
         inputField.setEditable(true);
+        inputField.setFocusable(true);
+        inputField.addKeyListener(this);
         add(inputField); 
-
+        
         sendButton = new JButton("Send");
         sendButton.setSize(100, 30);
         sendButton.addActionListener(this);
@@ -79,15 +84,39 @@ public class ChatPanel extends JPanel implements ActionListener {
 		chatlist = message + "\n" + chatlist;
 		chatField.setText(chatlist);
     }
- 
+    
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source == sendButton) {
-        	String message = inputField.getText();
-        	if(!message.equals("")){
-        		client.sendMessage(message);
-        	}
-            inputField.setText("");
+        	sendMessage();
         } 
     }
+    
+    private void sendMessage(){
+    	String message = inputField.getText();
+    	if(!message.equals("")){
+    		client.sendMessage(message);
+    	}
+        inputField.setText("");
+    }
+    
+    
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == 10){
+            sendMessage();
+		}			
+	}
+    
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }

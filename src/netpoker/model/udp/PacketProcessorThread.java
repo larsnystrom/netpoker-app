@@ -29,7 +29,7 @@ public class PacketProcessorThread extends Thread {
 			InetAddress clientAddress = recPacket.getAddress();
 			int clientPort = recPacket.getPort();
 			
-			System.out.println("Received: " + packet.toString());
+			System.out.println(getName() + " Processing: " + packet.toString());
 			
 			int packetNbr = packet.getPacketNbr();
 			

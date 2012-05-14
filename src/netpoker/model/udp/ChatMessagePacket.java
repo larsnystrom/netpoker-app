@@ -1,7 +1,5 @@
 package netpoker.model.udp;
 
-
-
 public class ChatMessagePacket extends Packet {
 	
 	public static final String command = "CHAT";

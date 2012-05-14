@@ -36,8 +36,6 @@ import netpoker.model.udp.ChatClient;
 import netpoker.model.udp.ChatMessagePacket;
 import netpoker.model.udp.SenderThread;
 
-
-
 /**
  * The game's main frame.
  * 

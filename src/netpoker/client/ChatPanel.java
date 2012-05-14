@@ -15,11 +15,6 @@ import javax.swing.JTextField;
 
 import netpoker.model.udp.ChatClient;
 
-
-
-
-//import texasholdem.Action;
-
 /**
  * Panel with buttons to let a human player select a poker action.
  * 
@@ -80,7 +75,7 @@ public class ChatPanel extends JPanel implements ActionListener, KeyListener {
     }
     
     public void updateChat(String message){
-    	System.out.print("updateChat "+message +message);
+    	System.out.println("updateChat "+message +message);
 		chatlist = message + "\n" + chatlist;
 		chatField.setText(chatlist);
     }
